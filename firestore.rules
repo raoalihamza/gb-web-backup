@@ -1,0 +1,164 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /badges/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /cities/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /greenplay_configurations/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /mail/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /ml-training-data/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /organisations/{organizationID} {
+      allow read, write: if true;
+
+      match /branches/{brancID} {
+        allow read, write: if true;
+      }
+
+      match /notifications/{notificationID} {
+        allow read, write: if true;
+      }
+
+      match /organisation_challenges_info/{challengeInfo} {
+        allow read, write: if true;
+      }
+
+      match /organisation_challenges_stats/{challengeStatID} {
+        allow read, write: if true;
+      }
+
+      match /organisation_challenges_stats_leaderboard/{challengeStatID} {
+        allow read, write: if true;
+      }
+
+      match /organisation_days/{dayID} {
+        allow read, write: if true;
+      }
+     
+      match /organisation_days_leaderboard/{dayID} {
+        allow read, write: if true;
+      }
+
+      match /organisation_weeks/{weekID} {
+        allow read, write: if true;
+      }
+
+      match /organisation_weeks_leaderboard/{weekID} {
+        allow read, write: if true;
+      }
+
+      match /organisation_months/{monthID} {
+        allow read, write: if true;
+      }
+
+      match /organisation_months_leaderboard/{monthID} {
+        allow read, write: if true;
+      }
+
+      match /organisation_years/{yearID} {
+        allow read, write: if true;
+      }
+
+      match /organisation_years_leaderboard/{yearID} {
+        allow read, write: if true;
+      }
+
+      match /user_affiliate/{userID} {
+        allow read, write: if true;
+      }
+
+      match /settings/{settingsID} {
+        allow read, write: if isOrganizationOwner(request, organizationID);
+      }
+    }
+
+    match /referrals/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /regions/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /reports/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /templates/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /users/{userID} {
+      allow read, write: if true;
+
+      match /badges/{badgeID} {
+        allow read, write: if true;
+      }
+
+      match /experience_transactions/{transactionID} {
+        allow read, write: if true;
+      }
+
+      match /habit_transport_mode_change_history/{habitModeID} {
+        allow read, write: if true;
+      }
+
+      match /notifications/{notificationID} {
+        allow read, write: if true;
+      }
+
+      match /user_challenges_stats/{challengeStatID} {
+        allow read, write: if true;
+      }
+
+      match /user_days/{userDayID} {
+        allow read, write: if true;
+      }
+      
+      match /user_days/{userDayID}/sessions/{sessionID} {
+        allow read, write: if true;
+      }
+      
+      match /user_months/{userMonthID} {
+        allow read, write: if true;
+      }
+
+      match /user_weeks/{userWeekID} {
+        allow read, write: if true;
+      }
+
+      match /user_years/{userYearID} {
+        allow read, write: if true;
+      }
+
+      match /user_joined_challenges/{challengeID} {
+        allow read, write: if true;
+      }
+
+      match /greenpoint_transactions/{transactionID} {
+        allow read, write: if hasOrganizationID(request, userID);
+      }
+    }
+    
+    function hasOrganizationID(request, userID) {
+      return request.auth.uid == get(/databases/$(database)/documents/users/$(userID)).data.organisationId;
+    }
+
+    function isOrganizationOwner(request, organizationID) {
+      return request.auth.uid == organizationID;
+    }
+  }
+}

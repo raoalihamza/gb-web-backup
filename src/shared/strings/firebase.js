@@ -1,0 +1,70 @@
+// List of available  firebase collections
+export const COLLECTION = Object.freeze({
+  challengesLeaderboard: "organisation_challenges_leaderboard",
+  challengesStatsLeaderboard: "organisation_challenges_stats_leaderboard",
+  challengesStats: "organisation_challenges_stats",
+  challengesInfo: "organisation_challenges_info",
+  Branches: "branches",
+  Notifications: "notifications",
+  notificationTemplates: "notificationTemplates",
+  Notifications_unsent: "notifications_unsent",
+  badges: "badges",
+  Organisations: "organisations",
+  Tenants: "tenants",
+  Templates: "templates",
+  Regions: "regions",
+  Users: "users",
+  externalUsers: "external_users",
+  pendingExternalUsers: "pending_external_users",
+  pendingTenants: "pending_tenants",
+  Cities: "cities",
+  cityChallengesLeaderboard: "city_challenges_leaderboard",
+  cityChallengesStatsLeaderboard: "city_challenges_stats_leaderboard",
+  cityChallengesStats: "city_challenges_stats",
+  cityChallengesInfo: "city_challenges_info",
+  emails:"emails",
+  Mail: "mail",
+  defiSansAuto: "defisansauto",
+  products: "products",
+  orders: "orders",
+  categories: "categories",
+  globalConfig: "global_config",
+  settings: "settings",
+  onboardingAccess: "onboarding_access",
+  organizationConfig: "organization_config",
+  greenpointTransactions: "greenpoint_transactions",
+  organisationUsers: "organisation_users",
+  carpoolingRequest: "carpooling_requests",
+  carpoolingMatches: "carpooling_matches",
+  carpoolingMatchSession: "carpool-sessions",
+  greenplayConfigurations: "greenplay_configurations",
+  challengeConfigurations: "challenge_configurations",
+  challengeTemplates: "challenge_templates",
+  barCodes: "barCodes",
+  news: "quotes",
+  HappyHours: "happy_hours",
+  cloudTasks: 'cloud-tasks',
+  carpoolEvents: 'carpool-events',
+});
+
+export const LOG_TYPES = {
+  months: "months",
+  weeks: "weeks",
+  years: "years",
+  range: "range",
+};
+
+export const MAPPED_LOG_TYPE_TO_COLLECTION = {
+  weeks: "week",
+  months: "month",
+  years: "year",
+  range: "range",
+};
+
+// error code and translation key mapping
+export const ErrorCodesMapping = Object.freeze({
+  "auth/email-already-in-use": "global.account_already_exists",
+  "auth/user-not-found": "global.wrong_email_or_password",
+  "auth/wrong-password": "global.wrong_email_or_password",
+  "auth/not-allowed":'global.not_allowed',
+});

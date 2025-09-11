@@ -1,0 +1,73 @@
+.card {
+  width: 100%;
+  padding-bottom: 30px;
+  height: 100%;
+  border: none;
+  background-color: transparent;
+
+  &.card--not-full-height {
+    height: auto;
+  }
+}
+
+.card-body {
+  padding: 30px;
+  height: 100%;
+  border-radius: 5px;
+  background-color: white;
+}
+
+.challenge-preview-title {
+  max-width: 12em;
+  max-height: 5em;
+}
+
+.card__title {
+  margin-bottom: 15px;
+  position: relative;
+
+  &:not(:first-child) {
+    margin-top: 40px;
+  }
+
+  .subhead {
+    text-transform: none;
+    font-size: 12px;
+    line-height: 18px;
+    opacity: 0.7;
+    margin-top: 3px;
+  }
+
+  * {
+    margin-bottom: 0;
+  }
+
+  h5 {
+    font-size: 13px;
+  }
+}
+
+.squared-corner-theme {
+  .card-body {
+    border-radius: 0;
+  }
+}
+
+.blocks-with-shadow-theme {
+  .card-body {
+    box-shadow: 0 10px 30px 1px rgba(0, 0, 0, 0.06);
+  }
+}
+
+.carousel-control span {
+  //background-color: #0707ff;
+  // border-radius: 50%;
+  // padding: 10px;
+  filter: invert(1) grayscale(100) drop-shadow(8px 8px 10px rgb(62, 175, 227));
+}
+.carousel-indicators {
+  margin-top: 10px;
+}
+.carousel-indicators li {
+  background-color: rgb(76, 225, 182);
+}

@@ -1,0 +1,19 @@
+{
+  "projects": {
+    "default": "defisansautosolo-17ee7",
+    "defisansautosolo": "defisansautosolo-17ee7",
+    "greenplay": "greenplay-d2122",
+    "greenplaytest": "greenplay-test-d85fa",
+    "sherbrooke": "greenplaysherbrooke"
+  },
+  "targets": {
+    "defisansautosolo-17ee7": {
+      "hosting": {
+        "defisansauto": [
+          "defisansauto"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

@@ -1,0 +1,26 @@
+.notificationModule {
+	//default
+
+	padding-top: 80px;
+	padding-left: 20px;
+	padding-right: 20px;
+	overflow-x: hidden;
+	background-color: #f2f4f7;
+	transition: all 0.2s ease-out;
+	@media screen and (min-width: 440px) {
+		margin-left: 50px;
+
+		&.sidebar-visible {
+			margin-left: 250px;
+		}
+	}
+
+	.notificationModule-link {
+		padding-right: 10px;
+	}
+}
+
+.notificationModule-picker-dropdown-toggle {
+	height: initial;
+	padding: 0.5rem 1rem;
+}

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content="#000000" />
+		<meta name="description" content="Greenplay web app" />
+		<link rel="apple-touch-icon" href="%PUBLIC_URL%/logo.png" />
+
+		<link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+		<title>Greenplay</title>
+
+		<link
+			rel="apple-touch-icon"
+			sizes="72x72"
+			href="/icons/apple-icon-72x72.png"
+		/>
+
+		<link
+			rel="icon"
+			type="image/png"
+			sizes="192x192"
+			href="/icons/android-icon-192x192.png"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			sizes="192x192"
+			href="/icons/android-icon-512x512.png"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			sizes="32x32"
+			href="/icons/favicon-32x32.png"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			sizes="16x16"
+			href="/icons/favicon-16x16.png"
+		/>
+		<meta name="msapplication-TileColor" content="#ffffff" />
+		<meta name="msapplication-TileImage" content="/icons/ms-icon-144x144.png" />
+		<meta name="theme-color" content="#ffffff" />
+		<script>
+			if ('serviceWorker' in navigator) {
+				window.addEventListener('load', () => {
+					return navigator.serviceWorker
+						.register('/service-worker.js')
+						.then((reg) => null)
+						.catch((error) => {
+							console.error('error', error)
+						});
+				});
+			}
+		</script>
+	</head>
+	<body>
+		<noscript>
+			Javascript must be enabled to use to use this web application
+		</noscript>
+		<div id="root"></div>
+		<div id="portal"></div>
+	</body>
+	<script>
+		(function (document, window) {
+			if (!document || !window) {
+				return;
+			}
+			var styleText =
+				'::-moz-focus-inner{border:0 !important;}:focus{outline: none !important;';
+			var unfocus_style = document.createElement('STYLE');
+
+			window.unfocus = function () {
+				document.getElementsByTagName('HEAD')[0].appendChild(unfocus_style);
+
+				document.addEventListener('mousedown', function () {
+					unfocus_style.innerHTML = styleText + '}';
+				});
+				document.addEventListener('keydown', function () {
+					unfocus_style.innerHTML = '';
+				});
+			};
+
+			unfocus.style = function (style) {
+				styleText += style;
+			};
+
+			unfocus();
+		})(document, window);
+	</script>
+</html>

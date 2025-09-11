@@ -1,0 +1,127 @@
+import React from "react";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
+import InputBase from "@material-ui/core/InputBase";
+import styled from "styled-components";
+import Box from "@material-ui/core/Box";
+import Select from "@material-ui/core/Select";
+import Chip from "@material-ui/core/Chip";
+
+const BootstrapInput = withStyles((theme) => ({
+  root: {
+    "label + &": {
+      marginTop: theme.spacing(3),
+    },
+  },
+  input: {
+    borderRadius: 4,
+    position: "relative",
+    backgroundColor: theme.palette.background.paper,
+    border: "1px solid #ced4da",
+    fontSize: 16,
+    padding: "10px 26px 10px 12px",
+    transition: theme.transitions.create(["border-color", "box-shadow"]),
+    fontFamily: [
+      "-apple-system",
+      "BlinkMacSystemFont",
+      '"Segoe UI"',
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+      "sans-serif",
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(","),
+    "&:focus": {
+      borderRadius: 4,
+      borderColor: "#80bdff",
+      boxShadow: "0 0 0 0.2rem rgba(0,123,255,.25)",
+    },
+  },
+}))(InputBase);
+
+const useStyles = makeStyles((theme) => ({
+  margin: {
+    margin: theme.spacing(1),
+  },
+  label: {
+    "&.Mui-focused": {
+      color: "inherit",
+    },
+  },
+}));
+
+const StyledFormControl = styled(FormControl)`
+  width: ${({ width }) => width};
+`;
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+    },
+  },
+};
+
+const CustomMultiSelect = ({
+  label = "",
+  options,
+  value = "",
+  onChange,
+  width = "200px",
+  disabled,
+  withLabel = true,
+  onClose,
+  onClick = () => {},
+}) => {
+  const classes = useStyles();
+
+  return (
+    <StyledFormControl
+      className={classes.margin}
+      width={width}
+      disabled={disabled}
+    >
+      {withLabel && (
+        <InputLabel id={label} className={classes.label} shrink>
+          {label}
+        </InputLabel>
+      )}
+      <Select
+        multiple
+        labelId={label}
+        value={value}
+        onChange={onChange}
+        input={<BootstrapInput />}
+        onClose={onClose}
+        renderValue={(selected) => {
+          return (
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+              {selected.map((value) => (
+                <Chip key={value} label={value} />
+              ))}
+            </Box>
+          );
+        }}
+        MenuProps={MenuProps}
+      >
+        {options.map((item) => (
+          <MenuItem
+            key={item.value}
+            value={item.value}
+            onClick={() => onClick(item)}
+          >
+            {item.label}
+          </MenuItem>
+        ))}
+      </Select>
+    </StyledFormControl>
+  );
+};
+
+export default CustomMultiSelect;

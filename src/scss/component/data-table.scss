@@ -1,0 +1,38 @@
+.data-table {
+    width: 100%;
+}
+
+.data-table-head,
+.data-table-data {
+    padding: 10px;
+    min-width: 100px;
+    opacity: 0.8;
+}
+
+.users-table-card-body tbody tr:hover {
+    background-color: #40e2a7;
+    color: white;
+    cursor: pointer;
+  }
+
+.data-table-data tbody tr:hover {
+    background-color: #40e2a7;
+    color: white;
+    cursor: pointer;
+  }
+
+.data-table-data {
+    border-top: 2px solid $color-secondary-gray;
+}
+
+.data-table-sort-tag {
+    display: inline-block;
+    width: 5px;
+    padding-left: 3px;
+}
+
+.data-table-pagination-button {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 0;
+}

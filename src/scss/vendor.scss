@@ -1,0 +1,285 @@
+@import '~react-vis/dist/styles/plot';
+@import '~react-vis/dist/styles/legends';
+@import '~react-vis/dist/styles/radial-chart';
+@import '~react-vis/dist/styles/treemap';
+@import '~react-vis/dist/styles/examples';
+
+//recharts
+
+path.recharts-sector {
+	@include themify($themes) {
+		stroke: themed('colorBackground');
+	}
+}
+
+.recharts-legend-item-text {
+	@include themify($themes) {
+		color: themed('colorText');
+	}
+}
+
+.recharts-cartesian-axis-line {
+	opacity: 0;
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+	fill: $color-additional;
+	opacity: 0.2;
+}
+
+.recharts-brush-slide {
+	fill: #dee3eb;
+	fill-opacity: 1;
+}
+
+.recharts-brush-traveller {
+	transform: translateX(-8px);
+
+	rect {
+		fill: #ffffff;
+		width: 12px;
+		stroke: #dee3eb;
+	}
+
+	line {
+		stroke: #dee3eb;
+		transform: translateX(4px);
+	}
+
+	&:first-of-type {
+		transform: translateX(0);
+	}
+}
+
+.recharts-tooltip-cursor {
+	fill-opacity: 0.2;
+}
+
+//chartsjs
+
+.card {
+	.chartjs-size-monitor {
+		& + .card__title:not(:first-child) {
+			margin-top: 0;
+		}
+	}
+}
+
+// rc-notification
+.rc-notification {
+	position: fixed;
+	z-index: 100;
+}
+
+.rc-notification-notice {
+	display: block;
+	width: auto;
+	line-height: 1.5;
+	position: relative;
+}
+
+.rc-notification-notice-close {
+	position: absolute;
+	cursor: pointer;
+	outline: none;
+	font-weight: 700;
+	line-height: 1;
+	opacity: 0.2;
+	text-decoration: none;
+}
+
+.rc-notification-notice-close-x:after {
+	content: '×';
+}
+
+.rc-notification-fade-enter {
+	opacity: 0;
+	animation-duration: 0.3s;
+	animation-fill-mode: both;
+	animation-timing-function: cubic-bezier(0.55, 0, 0.55, 0.2);
+	animation-play-state: paused;
+}
+
+.rc-notification-fade-leave {
+	animation-duration: 0.3s;
+	animation-fill-mode: both;
+	animation-timing-function: cubic-bezier(0.55, 0, 0.55, 0.2);
+	animation-play-state: paused;
+}
+
+.rc-notification-fade-enter.rc-notification-fade-enter-active {
+	animation-name: rcNotificationFadeIn;
+	animation-play-state: running;
+
+	&.right-up {
+		animation-name: rcNotificationRightFadeIn;
+	}
+
+	&.left-up {
+		animation-name: rcNotificationLeftFadeIn;
+	}
+}
+
+.rc-notification-fade-leave.rc-notification-fade-leave-active {
+	animation-name: rcDialogFadeOut;
+	animation-play-state: running;
+}
+
+@keyframes rcNotificationFadeIn {
+	0% {
+		transform: translateY(-100%);
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes rcNotificationLeftFadeIn {
+	0% {
+		transform: translateX(-100%);
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes rcNotificationRightFadeIn {
+	0% {
+		transform: translateX(100%);
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes rcDialogFadeOut {
+	0% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+	100% {
+		transform: translateY(-100%);
+		opacity: 0;
+	}
+}
+
+.rc-notification {
+	left: auto !important;
+	top: 60px !important;
+	height: 0;
+
+	& > span {
+		height: 0;
+		display: block;
+	}
+}
+
+.rc-notification-notice-close {
+	right: 45px;
+	top: 15px;
+	font-size: 26px;
+	line-height: 1;
+	font-weight: 300;
+	color: #646777;
+	text-shadow: none;
+	opacity: 0.2;
+
+	&:hover {
+		opacity: 0.5;
+		color: #646777;
+	}
+}
+
+.fallback-component {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.error-message-custom {
+	text-align: center;
+}
+
+// Date Picker
+
+.date-picker_ {
+	position: absolute;
+	z-index: 100;
+	background-color: white;
+	border-radius: 20px;
+	border: 1px solid grey;
+	top: 2rem;
+	right: 0;
+	@media screen and (min-width: 768px) {
+		top: 2rem;
+		right: 2rem;
+	}
+}
+
+// Skeleton
+.dashboard-rectangle {
+	height: 290px;
+}
+.dashboard-rectangle-l {
+	height: 580px;
+}
+.dashboard-rectangle-xl {
+	height: 800px;
+}
+.dashboard-rectangle-sm {
+	height: 120px;
+}
+
+.dashboard-rectangle-challenge-preview {
+	height: 250px;
+}
+
+.dashboard-skeleton-grid {
+	display: grid;
+	grid-gap: 2rem;
+	grid-template-columns: 1fr;
+
+	@media screen and (min-width: 768px) {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+.date-display-text {
+	font-size: 13px;
+	@media screen and (min-width: 768px) {
+		font-size: 16px;
+	}
+}
+.users-table-card-body {
+	overflow-x: auto;
+}
+
+// CSV
+.export-to-csv {
+	max-width: 150px;
+	border-radius: 5px;
+	background-color: $color-blue;
+	border: none;
+	margin-left: auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-decoration: none;
+}
+
+.export-to-csv-link {
+	display: inline-block;
+	padding: 0.5rem 1rem;
+	text-decoration: none;
+	color: $color-primary-white;
+	min-width: 100px;
+}

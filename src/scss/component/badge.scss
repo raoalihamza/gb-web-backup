@@ -1,0 +1,83 @@
+.badge {
+  max-width: 400px;
+  width: calc(100% - 50px);
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.07);
+  background: white;
+  padding: 20px 40px 30px 25px;
+  position: relative;
+  margin: 10px 25px;
+
+  &.badge--image {
+    height: 106px;
+    overflow: hidden;
+  }
+
+  &.badge--full-wide {
+    max-width: 100vw;
+    width: 100vw;
+    margin: 0;
+    padding: 20px 40px 20px 25px;
+  }
+
+  &.badge--primary {
+    background: $color-blue;
+
+    .badge__message, .badge__title {
+      color: white;
+    }
+  }
+
+  &.badge--success {
+    background: $color-accent;
+
+    .badge__message, .badge__title {
+      color: white;
+    }
+  }
+
+  &.badge--warning {
+    background: $color-yellow;
+
+    .badge__message, .badge__title {
+      color: white;
+    }
+  }
+
+  &.badge--danger {
+    background: $color-red;
+
+    .badge__message, .badge__title {
+      color: white;
+    }
+  }
+}
+
+.badge__message {
+  margin-top: 0;
+  font-size: 12px;
+  color: $color-additional;
+}
+
+.badge__title {
+  margin-bottom: 8px;
+  color: #646777;
+}
+
+.badge__image {
+  position: absolute;
+  height: 106px;
+  width: 106px;
+  top: 0;
+  left: 0;
+
+  & ~ * {
+    padding-left: 106px;
+  }
+}
+
+.sidebar.sidebar--collapse + .container__wrap {
+
+  .badges-tl, .badges-bl {
+    left: 0 !important;
+  }
+}

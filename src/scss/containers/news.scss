@@ -1,0 +1,53 @@
+.newsModule {
+	//default
+
+	padding-top: 80px;
+	padding-left: 20px;
+	padding-right: 20px;
+	overflow-x: hidden;
+	background-color: #f2f4f7;
+	transition: all 0.2s ease-out;
+	@media screen and (min-width: 440px) {
+		margin-left: 50px;
+
+		&.sidebar-visible {
+			margin-left: 250px;
+		}
+	}
+
+	.newsModule-link {
+		padding-right: 10px;
+	}
+}
+
+.newsModule-picker-dropdown-toggle {
+	height: initial;
+	padding: 0.5rem 1rem;
+}
+
+.happyHoursModule {
+	//default
+
+	padding-top: 80px;
+	padding-left: 20px;
+	padding-right: 20px;
+	overflow-x: hidden;
+	background-color: #f2f4f7;
+	transition: all 0.2s ease-out;
+	@media screen and (min-width: 440px) {
+		margin-left: 50px;
+
+		&.sidebar-visible {
+			margin-left: 250px;
+		}
+	}
+
+	.happyHoursModule-link {
+		padding-right: 10px;
+	}
+}
+
+.happyHoursModule-picker-dropdown-toggle {
+	height: initial;
+	padding: 0.5rem 1rem;
+}

@@ -1,0 +1,96 @@
+.challenge {
+  //default
+
+  padding-top: 80px;
+  padding-left: 20px;
+  padding-right: 20px;
+  overflow-x: hidden;
+  background-color: #f2f4f7;
+  transition: all 0.2s ease-out;
+  @media screen and (min-width: 440px) {
+    margin-left: 50px;
+
+    &.sidebar-visible {
+      margin-left: 250px;
+    }
+  }
+}
+
+.challenge-page {
+  //default
+
+  padding-top: 80px;
+  padding-left: 20px;
+  padding-right: 20px;
+  overflow-x: hidden;
+  background-color: #f2f4f7;
+  transition: all 0.2s ease-out;
+  @media screen and (min-width: 440px) {
+    margin-left: 50px;
+
+    &.sidebar-visible {
+      margin-left: 250px;
+    }
+  }
+
+  .health-chart-info-challenges {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    font-size:0.75rem;
+    transform: translate(-50%, -50%);
+  }
+  .health-chart-number-challenges {
+    font-size: 18px;
+  }
+  .health-chart-units {
+    color: $color-additional;
+    margin-top: 0px;
+  }
+}
+
+.challenge-dashboard {
+  //default
+
+  padding-top: 80px;
+  padding-left: 20px;
+  padding-right: 20px;
+  overflow-x: hidden;
+  background-color: #f2f4f7;
+  transition: all 0.2s ease-out;
+  @media screen and (min-width: 440px) {
+    margin-left: 50px;
+
+    &.sidebar-visible {
+      margin-left: 250px;
+    }
+  }
+
+  .dashboard__health-chart {
+    position: relative;
+    background-color: #f2f4f733;
+  }
+  .dashboard__health-chart-card {
+    text-align: center;
+  }
+  .dashboard__health-chart-units {
+    color: $color-additional;
+    margin-top: 0px;
+  }
+  .dashboard__health-chart-info-challenges {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    font-size: 0.75rem;
+    transform: translate(-50%, -50%);
+  }
+  .dashboard__health-chart-number-challenges {
+    font-size: 18px;
+  }
+  .dashboard__health-chart-number-challenges-2 {
+    font-size: 24px;
+  }
+  .challenge-title {
+    font-size: 20px;
+  }
+}

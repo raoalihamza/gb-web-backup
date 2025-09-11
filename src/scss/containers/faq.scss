@@ -1,0 +1,18 @@
+.faq {
+	//default
+
+	padding-top: 80px;
+	padding-left: 20px;
+	padding-right: 20px;
+	overflow-x: hidden;
+	background-color: #f2f4f7;
+	transition: all 0.2s ease-out;
+	border:0;
+	@media screen and (min-width: 440px) {
+		margin-left: 50px;
+		border:0;
+		&.sidebar-visible {
+			margin-left: 250px;
+		}
+	}
+}
