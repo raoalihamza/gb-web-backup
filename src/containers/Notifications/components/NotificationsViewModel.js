@@ -9,7 +9,7 @@ import batchUtils from "utils/batchUtils";
 import { addCloudTask } from "services/messaging";
 import dateUtils from "utils/dateUtils";
 
-const { REACT_APP_CLOUD_FUNCTION_API_URL } = process.env;
+const { VITE_CLOUD_FUNCTION_API_URL } = process.env;
 
 export default class NotificationsViewModel extends Firebase {
   constructor(t) {
@@ -83,7 +83,7 @@ export default class NotificationsViewModel extends Firebase {
       notificationName: notificationData?.name,
       notificationImage: {
         imageUrl: notificationData?.imageUrl ?? `${process.env.PUBLIC_URL}/o/logo%2Flogo.png?alt=media`,
-        name: notificationData?.imageName || `${process.env.REACT_APP_FIREBASE_PROJECT_ID}`,
+        name: notificationData?.imageName || `${import.meta.env.VITE__FIREBASE_PROJECT_ID}`,
       },
       notificationId: notification?.id,
       plannedOn: notificationData?.plannedOn?.toDate(),
@@ -124,7 +124,7 @@ export default class NotificationsViewModel extends Firebase {
 
     if (mainCollection === COLLECTION.Organisations) {
       const inSeconds = dateUtils.getSecondsToPlanedDate(notificationWithCreateDateAndId.plannedOn);
-      const url = `${REACT_APP_CLOUD_FUNCTION_API_URL}/messagingApi/sendNotification`;
+      const url = `${VITE_CLOUD_FUNCTION_API_URL}/messagingApi/sendNotification`;
       const task = { payload: { ...notificationWithCreateDateAndId, organisationId: uid }, inSeconds, url, organisationId: uid, executionDate: notificationWithCreateDateAndId.plannedOn.getTime() };
       await this.firestore.collection(COLLECTION.cloudTasks).doc(`${uid}-${newDoc.id}`).set(task, { merge: true });
     }
@@ -192,7 +192,7 @@ export default class NotificationsViewModel extends Firebase {
     const contenu = values.contenu;
     const notificationImage = !values.notificationImage || !values.notificationImage.imageUrl ? {
       imageUrl: `https://greenplay.social/wp-content/uploads/2021/06/Greenplay_Favicon.png`,
-      name: process.env.REACT_APP_FIREBASE_PROJECT_ID
+      name: import.meta.env.VITE__FIREBASE_PROJECT_ID
     } : values.notificationImage;
     const plannedOn = values.plannedOn;
     const testUsers = values.testUsers;
@@ -219,7 +219,7 @@ export default class NotificationsViewModel extends Firebase {
     const organisations = await getCityAllOrganisations(cityId);
     const notificationWithoutId = this.notificationToFirestoreWithoutId(values);
     const notificationWithCreateDateAndId = { ...notificationWithoutId, createdOn: new Date(), id: notificationId }
-    const url = `${REACT_APP_CLOUD_FUNCTION_API_URL}/messagingApi/sendNotification`;
+    const url = `${VITE_CLOUD_FUNCTION_API_URL}/messagingApi/sendNotification`;
 
     await batchUtils.batchLimitParallel({
       firestore: firestore,
@@ -300,7 +300,7 @@ export default class NotificationsViewModel extends Firebase {
     const notificationWithoutId = this.notificationToFirestoreWithoutId(values);
     const notificationWithCreateDateAndId = { ...notificationWithoutId, createdOn: new Date() }
     const tasks = [];
-    const url = `${REACT_APP_CLOUD_FUNCTION_API_URL}/messagingApi/sendNotification`;
+    const url = `${VITE_CLOUD_FUNCTION_API_URL}/messagingApi/sendNotification`;
 
     await batchUtils.batchLimitParallel({
       firestore: firestore,

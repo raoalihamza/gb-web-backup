@@ -11,7 +11,7 @@ function useCustomQuery() {
 }
 
 const useIsEnglishAvailable = () => {
-  const isEnglishAvailable = useMemo(() => process.env.REACT_APP_LANGUAGES?.split(",").includes("en"), []);
+  const isEnglishAvailable = useMemo(() => import.meta.env.VITE__LANGUAGES?.split(",").includes("en"), []);
   return { isEnglishAvailable }
 };
 

@@ -161,7 +161,7 @@ const useFetchOrders = (userDetails, limit, logType, startDate, pageSize) => {
           user = { tenantId: userId };
         }
 
-        const tenantOrders = await getTenantOrders(user);
+        const tenantOrders = await getTenantOrders(user, params);
         const formattedOrders = formatOrders(tenantOrders)
         setOrders(formattedOrders);
       } catch (error) {

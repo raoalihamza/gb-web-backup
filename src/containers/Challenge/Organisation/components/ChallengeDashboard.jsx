@@ -19,7 +19,7 @@ export default function ChallengeDashboard() {
   const isCollapsed = useSelector((state) => state.sidebar.collapse);
 
   const [branch, setBranch] = React.useState(undefined);
-  const projectId = process.env.REACT_APP_FIREBASE_PROJECT_ID;
+  const projectId = import.meta.env.VITE__FIREBASE_PROJECT_ID;
 
 
   return (

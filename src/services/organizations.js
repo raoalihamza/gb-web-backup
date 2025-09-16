@@ -4,7 +4,7 @@ import { firestoreToArray } from "./helpers";
 import firebase from "firebase/compat/app";
 import axios from "axios";
 
-const { REACT_APP_CLOUD_FUNCTION_API_URL } = process.env;
+const { VITE_CLOUD_FUNCTION_API_URL } = process.env;
 
 export const fetchOrganizationLimitSettings = (organizationID) => {
   const ref = firestore.collection(`organisations/${organizationID}/settings`).doc('limits');
@@ -104,7 +104,7 @@ export const changeOrganizationDisabledProperty = async (organizationId, disable
     throw new Error('organizationId is required')
   }
 
-  return fetch(`${REACT_APP_CLOUD_FUNCTION_API_URL}/v2/activation/organizations/${organizationId}`, {
+  return fetch(`${VITE_CLOUD_FUNCTION_API_URL}/v2/activation/organizations/${organizationId}`, {
     method: "POST"
   }).then(async (response) => {
     if (!response.ok) {
@@ -126,8 +126,8 @@ export const deleteOrganization = async (organizationId, cityId, disabled = true
   try {
     const token = await auth.currentUser.getIdToken();
 
-    const url = `${REACT_APP_CLOUD_FUNCTION_API_URL}/app/v2/delete/organizations/${organizationId}/${cityId}`;
-    const url2 = `${REACT_APP_CLOUD_FUNCTION_API_URL}/app/v2/delete/organizations/${organizationId}/${cityId}`;
+    const url = `${VITE_CLOUD_FUNCTION_API_URL}/app/v2/delete/organizations/${organizationId}/${cityId}`;
+    const url2 = `${VITE_CLOUD_FUNCTION_API_URL}/app/v2/delete/organizations/${organizationId}/${cityId}`;
 
     await axios.delete(
       url,

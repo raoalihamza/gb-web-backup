@@ -28,7 +28,7 @@ import usersHooks from "hooks/users.hooks";
 import { AVAILABLE_FILTER_TYPES } from "atomicComponents/FilterDatePicker";
 import commonHooks from "hooks/common.hooks";
 
-const projectId = process.env.REACT_APP_FIREBASE_PROJECT_ID;
+const projectId = import.meta.env.VITE__FIREBASE_PROJECT_ID;
 
 export default function ChallengePage({ userId, challengeId, editDisabled }) {
   const [t, i18next] = useTranslation("common");

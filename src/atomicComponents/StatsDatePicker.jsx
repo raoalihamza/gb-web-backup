@@ -21,7 +21,7 @@ const LOG_TYPE = {
 };
 registerLocale("fr", fr);
 
-const projectId = process.env.REACT_APP_FIREBASE_PROJECT_ID;
+const projectId = import.meta.env.VITE__FIREBASE_PROJECT_ID;
 
 const StatsDatePicker = ({ startDate, setStartDate, logType, setEndDate, endDate, maxDaysRange }) => {
   const [isCalenderOpened, setIsCalenderOpened] = React.useState(false);

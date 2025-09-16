@@ -7,13 +7,14 @@ import { DASHBOARD_AVAILABLE_FILTER_TYPES } from "atomicComponents/FilterDatePic
 import { fetchDashboardActiveUsersCount, fetchDashboardAllGreenpoints, fetchDashboardSustainableDistance, fetchDashboardGHG, fetchDashboardSustainableSessions, fetchDashboardTotalActivities, fetchDashboardTotalGreenpoints, fetchDashboardTotalPeriods, fetchDashboardTotalUsers, fetchCarpoolEvents, fetchSingleCarpoolEvent, getSingleCarpoolEventRef, fetchCarpoolEventsStream, createCarpoolEventApi } from "services/common";
 import { getEndDateForDashboard } from "containers/Dashboards/common";
 import dateUtils from "utils/dateUtils";
-import { uploadImage } from "services/bucket-storage";
+import { generatedDownloadUrl, generatedFullImagePath, uploadImage, uploadImagesAndTransformToData } from "services/bucket-storage";
 import { storage } from "containers/firebase";
 import { useHistory } from "react-router-dom";
 import { routes } from "containers/App/Router";
 import { firestoreToArray } from "services/helpers";
 import { getCarpoolingMatchesGroupByEventId, getCarpoolingRequestsGroupByEventId } from "services/users";
 import { validateCarpoolEvent } from "containers/Commons/validations/ValidateCarpoolEvent";
+import { COLLECTION } from "shared/strings/firebase";
 
 const SelectWrapper = styled.div`
   display: flex;
@@ -557,6 +558,7 @@ const useSingleCarpoolEvent = ({ role, ownerId, eventId }) => {
       day1: res.startTime,
       day2: res.startTime,
     },
+    images: (res?.images || []).map(img => ({ ...img, preview: img.originUrl, name: img.id })),
   }), []);
 
   const getSingleEvent = useCallback(async () => {
@@ -608,45 +610,49 @@ const useSingleCarpoolEvent = ({ role, ownerId, eventId }) => {
         return;
       }
 
+      const ref = await getSingleCarpoolEventRef({ role, ownerId, eventId: eventId === 'create' ? undefined : eventId });
+      console.log(`ref =>`, ref);
+      const imagesData = await uploadImagesAndTransformToData({images: data?.images, path: `/carpool-events/${ref.id}/images/`});
+      
+      data.images = imagesData;
+      
       if (eventId === 'create') {
-        if (!carpoolersFile) {
-          setErrors((prev) => ({ ...prev, carpoolersFile: { en: 'File is required', fr: 'Fr file is required' } }))
-          return;
-        }
-
-        const ref = await getSingleCarpoolEventRef({ role, ownerId });
-
         data.mapping = fieldNamesMappingHardcoded;
+        data.id = ref.id;
 
-        const filePath = `/carpool-events/${ref.id}/`;
-        const fileName = `${Date.now()}.${carpoolersFile.name.split('.').at(-1)}`;
+        if(carpoolersFile) {
+          const filePath = `/carpool-events/${ref.id}/`;
+          const fileName = `${Date.now()}.${carpoolersFile.name.split('.').at(-1)}`;
+          const uploadTask = uploadImage(carpoolersFile, `${filePath}${fileName}`);
 
-        const uploadTask = uploadImage(carpoolersFile, `${filePath}${fileName}`);
+          uploadTask.on(
+            "state_changed",
+            (snapShot) => { },
+            (err) => {
+              //catches the errors
+              console.log("Uploading", err);
+            },
+            async () => {
+              const storageUrl = storage
+                .ref(filePath)
+                .child(fileName)
+                .toString();
 
-        uploadTask.on(
-          "state_changed",
-          (snapShot) => { },
-          (err) => {
-            //catches the errors
-            console.log("Uploading", err);
-          },
-          async () => {
-            const storageUrl = storage
-              .ref(filePath)
-              .child(fileName)
-              .toString();
-
-            data.participantsFile = storageUrl;
-            data.id = ref.id;
-            data.createdAt = new Date();
-            await ref.set(data, { merge: true, })
-            createCarpoolEventApi({ ownerId, eventId: ref.id, role });
-            navigator.push(successRoute);
-          }
-        );
+              data.participantsFile = storageUrl;
+              data.createdAt = new Date();
+              await ref.set(data, { merge: true, })
+              createCarpoolEventApi({ ownerId, eventId: ref.id, role });
+              navigator.push(successRoute);
+            }
+          ); 
+        } else {
+          data.createdAt = new Date();
+          await ref.set(data, { merge: true, })
+          createCarpoolEventApi({ ownerId, eventId: ref.id, role });
+          navigator.push(successRoute);
+        }
       } else {
-        const ref = await getSingleCarpoolEventRef({ role, ownerId, eventId });
-
+        console.log(`carpoolersFile =>`, carpoolersFile);
         if (!carpoolersFile) {
           delete data.errorUsers;
           await ref.set(data, { merge: true, });

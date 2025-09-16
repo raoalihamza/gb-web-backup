@@ -42,7 +42,7 @@ import { updateOrganizationById } from "services/organizations";
 import { setDetails } from "redux/actions/authAction";
 import { MuiThemeProvider } from "material-ui/styles";
 
-const projectId = process.env.REACT_APP_FIREBASE_PROJECT_ID;
+const projectId = import.meta.env.VITE__FIREBASE_PROJECT_ID;
 
 const LOG_TYPE = {
   week: "week",

@@ -1,11 +1,11 @@
 import numberUtils from "utils/numberUtils";
 
 // const useIsEnglishAvailable = () => {
-//   const isEnglishAvailable = useMemo(() => process.env.REACT_APP_LANGUAGES?.split(",").includes("en"), []);
+//   const isEnglishAvailable = useMemo(() => import.meta.env.VITE__LANGUAGES?.split(",").includes("en"), []);
 //   return { isEnglishAvailable }
 // };
 
-//let languages = process.env.REACT_APP_LANGUAGES;
+//let languages = import.meta.env.VITE__LANGUAGES;
 
 const validateCreateProduct = (values, languages) => {
 

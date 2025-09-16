@@ -17,7 +17,7 @@ import cityHooks from "hooks/city.hooks";
 import usersHooks from "hooks/users.hooks";
 import AlertComponent from "shared/components/Alert";
 
-const project = process.env.REACT_APP_FIREBASE_PROJECT_ID;
+const project = import.meta.env.VITE__FIREBASE_PROJECT_ID;
 
 export default function Topbar({
   changeMobileSidebarVisibility,

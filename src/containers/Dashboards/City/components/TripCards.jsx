@@ -49,7 +49,7 @@ const Style = styled.div`
   }
 `;
 
-const isDsa = process.env.REACT_APP_FIREBASE_PROJECT_ID === "defisansautosolo-17ee7";
+const isDsa = import.meta.env.VITE__FIREBASE_PROJECT_ID === "defisansautosolo-17ee7";
 
 const transportData = [
   {

@@ -7,7 +7,7 @@ import moment from "moment";
 import { addCloudTask } from "services/messaging";
 import dateUtils from "utils/dateUtils";
 
-const { REACT_APP_CLOUD_FUNCTION_API_URL } = process.env;
+const { VITE_CLOUD_FUNCTION_API_URL } = process.env;
 
 export default class HappyHoursViewModel extends Firebase {
   constructor(t) {
@@ -86,7 +86,7 @@ export default class HappyHoursViewModel extends Firebase {
 
     if (mainCollection === COLLECTION.Organisations) {
       const inSeconds = dateUtils.getSecondsToPlanedDate(happyHourWithCreateDateAndId.plannedOn);
-      const url = `${REACT_APP_CLOUD_FUNCTION_API_URL}/messagingApi/sendHappyHour`;
+      const url = `${VITE_CLOUD_FUNCTION_API_URL}/messagingApi/sendHappyHour`;
       const task = { ...happyHourWithCreateDateAndId, inSeconds, url, organisationId: uid };
       await addCloudTask(task)
     }

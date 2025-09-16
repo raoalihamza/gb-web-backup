@@ -4,7 +4,7 @@ import { COLLECTION } from "shared/strings/firebase";
 import { firestoreToArray } from "./helpers";
 import batchUtils from "utils/batchUtils";
 
-const { REACT_APP_CLOUD_FUNCTION_API_URL } = process.env;
+const { VITE_CLOUD_FUNCTION_API_URL } = process.env;
 
 // --- CACHE LOGIC ---
 const memoryCache = {};
@@ -51,7 +51,7 @@ export const getCompletelyStats = async (params) => {
 
   const res = await axios
     .get(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/statsApi/v2/get-stats-by?ownerType=${params.ownerType}&ownerId=${params.ownerId}&period=${params.period}&periodKey=${params.periodKey}&branchId=${params.branchId}&withAllUsers=${params.withAllUsers}&startDate=${params.startDate}&endDate=${params.endDate}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/v2/get-stats-by?ownerType=${params.ownerType}&ownerId=${params.ownerId}&period=${params.period}&periodKey=${params.periodKey}&branchId=${params.branchId}&withAllUsers=${params.withAllUsers}&startDate=${params.startDate}&endDate=${params.endDate}`
     )
     .then((res) => res.data)
     .catch((err) => { console.log(`error getCompletelyStats : ${err}`) });
@@ -68,7 +68,7 @@ export const getUsersActivities = async (params) => {
 
   const res = await axios
     .get(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/statsApi/v2/get-useractivities-stats-by?ownerType=${params.ownerType}&ownerId=${params.ownerId}&period=${params.period}&periodKey=${params.periodKey}&branchId=${params.branchId}&withAllUsers=${params.withAllUsers}&startDate=${params.startDate}&endDate=${params.endDate}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/v2/get-useractivities-stats-by?ownerType=${params.ownerType}&ownerId=${params.ownerId}&period=${params.period}&periodKey=${params.periodKey}&branchId=${params.branchId}&withAllUsers=${params.withAllUsers}&startDate=${params.startDate}&endDate=${params.endDate}`
     )
     .then((res) => res.data)
     .catch((err) => { console.log(`error get-useractivities-stats-by : ${err}`) });
@@ -114,7 +114,7 @@ export const fetchDashboardSustainableDistance = async (params) => {
 
   const res = await axios
     .get(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/statsApi/get-total-sustainable-distance?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/get-total-sustainable-distance?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
     )
     .then((res) => res.data)
     .catch((err) => { console.log(`error get-total-sustainable-distance : ${err}`) });
@@ -130,7 +130,7 @@ export const fetchDashboardGHG = async (params) => {
 
   const res = await axios
     .get(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/statsApi/get-total-ghg?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/get-total-ghg?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
     )
     .then((res) => res.data)
     .catch((err) => { console.log(`error get-total-ghg : ${err}`) });
@@ -146,7 +146,7 @@ export const fetchDashboardSustainableSessions = async (params) => {
 
   const res = await axios
     .get(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/statsApi/get-total-sustainable-sessions?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/get-total-sustainable-sessions?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
     )
     .then((res) => res.data)
     .catch((err) => { console.log(`error get-total-sustainable-sessions : ${err}`) });
@@ -162,7 +162,7 @@ export const fetchDashboardTotalGreenpoints = async (params) => {
 
   const res = await axios
     .get(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/statsApi/get-total-greenpoints?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/get-total-greenpoints?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
     )
     .then((res) => res.data)
     .catch((err) => { console.log(`error get-total-greenpoints : ${err}`) });
@@ -178,7 +178,7 @@ export const fetchDashboardAllGreenpoints = async (params) => {
 
   const res = await axios
     .get(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/statsApi/get-all-greenpoints?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/get-all-greenpoints?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
     )
     .then((res) => res.data)
     .catch((err) => { console.log(`error get-all-greenpoints : ${err}`) });
@@ -194,7 +194,7 @@ export const fetchDashboardActiveUsersCount = async (params) => {
 
   const res = await axios
     .get(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/statsApi/get-total-active-users-count?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/get-total-active-users-count?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
     )
     .then((res) => res.data)
     .catch((err) => { console.log(`error get-total-active-users-count : ${err}`) });
@@ -210,7 +210,7 @@ export const fetchDashboardTotalActivities = async (params) => {
 
   const res = await axios
     .get(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/statsApi/get-total-activities?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/get-total-activities?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
     )
     .then((res) => res.data)
     .catch((err) => { console.log(`error get-total-activities : ${err}`) });
@@ -226,7 +226,7 @@ export const fetchDashboardTotalPeriods = async (params) => {
 
   const res = await axios
     .get(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/statsApi/get-total-periods?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/get-total-periods?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
     )
     .then((res) => res.data)
     .catch((err) => { console.log(`error get-total-periods : ${err}`) });
@@ -242,7 +242,7 @@ export const fetchDashboardTotalUsers = async (params) => {
 
   const res = await axios
     .get(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/statsApi/get-total-users?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/get-total-users?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
     )
     .then((res) => res.data)
     .catch((err) => { console.log(`error get-total-users : ${err}`) });
@@ -297,7 +297,7 @@ export const createCarpoolEventApi = async (params) => {
 
   const res = await axios
     .post(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/carpoolApi/create-carpool-event/${params.ownerId}/${params.eventId}/${params.role}`,
+      `${VITE_CLOUD_FUNCTION_API_URL}/carpoolApi/create-carpool-event/${params.ownerId}/${params.eventId}/${params.role}`,
       {}
     )
     .then((res) => res.data)

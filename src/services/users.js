@@ -5,7 +5,7 @@ import { getCountFromServer, where, collection, query, getFirestore } from "fire
 import { firestoreToArray } from "./helpers";
 import { COLLECTION } from "shared/strings/firebase";
 
-const { REACT_APP_CLOUD_FUNCTION_API_URL } = process.env;
+const { VITE_CLOUD_FUNCTION_API_URL } = process.env;
 
 export const TRANSACTION_COLLECTIONS = {
   greenpoint: 'greenpoint',
@@ -156,7 +156,7 @@ export const changeUserDisabledProperty = (userId, disabled = true) => {
     throw 'userID is required';
   }
 
-  return fetch(`${REACT_APP_CLOUD_FUNCTION_API_URL}/app/v2/activation/users/${userId}`, {
+  return fetch(`${VITE_CLOUD_FUNCTION_API_URL}/app/v2/activation/users/${userId}`, {
     method: "POST"
   }).then(async (response) => {
     if (!response.ok) {
@@ -174,7 +174,7 @@ export const updateUserAuthEmail = async (userId, email, password, role) => {
     throw new Error('userId is required');
   }
 
-  const url = `${REACT_APP_CLOUD_FUNCTION_API_URL}/app/v2/updateuser`;
+  const url = `${VITE_CLOUD_FUNCTION_API_URL}/app/v2/updateuser`;
 
   try {
     const token = await auth.currentUser.getIdToken();
@@ -216,7 +216,7 @@ export const deaffiliateUser = (userId) => {
   }
 
   return auth.currentUser.getIdToken().then((token) => {
-    axios.post(`${REACT_APP_CLOUD_FUNCTION_API_URL}/app/v2/deaffiliate-user`,
+    axios.post(`${VITE_CLOUD_FUNCTION_API_URL}/app/v2/deaffiliate-user`,
       {
         userId: userId
       }, {
@@ -233,7 +233,7 @@ export const completelyDeleteUser = (userId) => {
   }
 
   return auth.currentUser.getIdToken().then((token) => {
-    axios.delete(`${REACT_APP_CLOUD_FUNCTION_API_URL}/app/v2/users/${userId}?completely=true`, {
+    axios.delete(`${VITE_CLOUD_FUNCTION_API_URL}/app/v2/users/${userId}?completely=true`, {
       headers: {
         Authorization: `Bearer ${token}`
       },

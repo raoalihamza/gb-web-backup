@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const { REACT_APP_API_URL, REACT_APP_API_URL_DEV } = process.env;
+const { VITE_API_URL, VITE_API_URL_DEV } = process.env;
 const API_URL =
 	process.env.NODE_ENV === 'development'
-		? REACT_APP_API_URL_DEV
-		: REACT_APP_API_URL;
+		? VITE_API_URL_DEV
+		: VITE_API_URL;
 
 const instance = axios.create({
 	baseURL: API_URL,

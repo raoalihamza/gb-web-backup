@@ -10,7 +10,7 @@ import batchUtils from "utils/batchUtils";
 import { addCloudTask } from "services/messaging";
 import dateUtils from "utils/dateUtils";
 
-const { REACT_APP_CLOUD_FUNCTION_API_URL } = process.env;
+const { VITE_CLOUD_FUNCTION_API_URL } = process.env;
 
 export default class EmailsViewModel extends Firebase {
   constructor() {
@@ -82,7 +82,7 @@ export default class EmailsViewModel extends Firebase {
 
     if (mainCollection === COLLECTION.Organisations) {
       const inSeconds = dateUtils.getSecondsToPlanedDate(emailWithCreateDateAndId.plannedOn);
-      const url = `${REACT_APP_CLOUD_FUNCTION_API_URL}/messagingApi/sendEmail`;
+      const url = `${VITE_CLOUD_FUNCTION_API_URL}/messagingApi/sendEmail`;
       const task = { ...emailWithCreateDateAndId, inSeconds, url, organisationId: uid };
       await addCloudTask(task)
     }
@@ -166,7 +166,7 @@ export default class EmailsViewModel extends Firebase {
     const emailWithoutId = this.emailToFirestoreWithoutId(values);
     const emailWithCreateDateAndId = {...emailWithoutId, createdOn: new Date(), id: emailId}
     const tasks = [];
-    const url = `${REACT_APP_CLOUD_FUNCTION_API_URL}/messagingApi/sendEmail`;
+    const url = `${VITE_CLOUD_FUNCTION_API_URL}/messagingApi/sendEmail`;
 
     await batchUtils.batchLimitParallel({
       firestore: firestore,

@@ -11,7 +11,7 @@ import RegisterViewModel from "./components/RegisterViewModel";
 import { routes } from "containers/App/Router";
 import { useSelector } from "react-redux";
 
-const SUPPORT_EMAIL = process.env.REACT_APP_SUPPORT_EMAIL;
+const SUPPORT_EMAIL = import.meta.env.VITE__SUPPORT_EMAIL;
 
 function Register() {
   const { t } = useTranslation("common");

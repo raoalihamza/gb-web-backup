@@ -20,7 +20,7 @@ export default function OrganisationSidebar() {
 	const history = useHistory();
 
 	const firebase = React.useMemo(() => new Firebase(), []);
-	const projectId = process.env.REACT_APP_FIREBASE_PROJECT_ID;
+	const projectId = import.meta.env.VITE__FIREBASE_PROJECT_ID;
 
 	const { details, userId: userID } = usersHooks.useExternalUser();
 

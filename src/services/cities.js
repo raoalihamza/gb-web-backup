@@ -5,7 +5,7 @@ import axios from "axios";
 import { TENANTS_STATUSES } from "constants/statuses";
 import { sleep } from "containers/utils";
 
-const { REACT_APP_CLOUD_FUNCTION_API_URL } = process.env;
+const { VITE_CLOUD_FUNCTION_API_URL } = process.env;
 
 export const getCityById = async (id) => {
   return firestore
@@ -142,7 +142,7 @@ export const fetchCityMailerLiteConnectedUsers = async (cityId) => {
 
 export const syncMailerLiteSubscriptions = async (cityId) => {
   return axios
-    .post(`${REACT_APP_CLOUD_FUNCTION_API_URL}/syncMailerLiteSubscriptions/`, { cityId })
+    .post(`${VITE_CLOUD_FUNCTION_API_URL}/syncMailerLiteSubscriptions/`, { cityId })
     .then(async (res) => {
       const lastSyncMailerLiteSubscriptionsTimestamp = Date.now();
       await firestore
@@ -164,7 +164,7 @@ export const removeExcludedUsersFromChallenge = (
   }
 
   return fetch(
-    `${REACT_APP_CLOUD_FUNCTION_API_URL}/app/v2/exclude-users-from-challenge/${challengeId}`,
+    `${VITE_CLOUD_FUNCTION_API_URL}/app/v2/exclude-users-from-challenge/${challengeId}`,
     {
       method: "POST",
       body: JSON.stringify({ excludeUsers }),
@@ -195,7 +195,7 @@ export const getCityTenantStores = async (cityId) => {
 export const getCityCarpoolStats = async ({ ownerId, period, periodKey }) => {
   return axios
     .get(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/carpoolApi/get-stats-by?ownerId=${ownerId}&period=${period}&periodKey=${periodKey}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/carpoolApi/get-stats-by?ownerId=${ownerId}&period=${period}&periodKey=${periodKey}`
     )
     .then((res) => res.data)
     .catch((err) => console.log("problem with querying APi getCityCarpoolStats", err));
@@ -203,10 +203,10 @@ export const getCityCarpoolStats = async ({ ownerId, period, periodKey }) => {
 
 export const getCityRawSessionsData = async ({ period, periodKey }) => {
   console.log(`sessionsStatsApi`);
-  console.log(`${REACT_APP_CLOUD_FUNCTION_API_URL} / sessionsStatsApi / get - raw - sessions - by / true ? period = ${period} & periodKey=${periodKey}`)
+  console.log(`${VITE_CLOUD_FUNCTION_API_URL} / sessionsStatsApi / get - raw - sessions - by / true ? period = ${period} & periodKey=${periodKey}`)
   return axios
     .get(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/sessionsStatsApi/get-raw-sessions-by?period=${period}&periodKey=${periodKey}&useAlternate=${true}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/sessionsStatsApi/get-raw-sessions-by?period=${period}&periodKey=${periodKey}&useAlternate=${true}`
     )
     .then((res) => res.data)
     .catch((err) => console.log("problem with querying APi getCityRawSessionsData ", err));
@@ -220,13 +220,13 @@ export const getCitySessionsData = async ({
   activityType,
 }) => {
 
-  console.log(`${REACT_APP_CLOUD_FUNCTION_API_URL}/sessionsStatsApi/get-sessions-by?period=${period}&periodKey=${periodKey}&distanceMin=${distanceMin}&distanceMax=${distanceMax}&activityType=${activityType}`
+  console.log(`${VITE_CLOUD_FUNCTION_API_URL}/sessionsStatsApi/get-sessions-by?period=${period}&periodKey=${periodKey}&distanceMin=${distanceMin}&distanceMax=${distanceMax}&activityType=${activityType}`
   )
 
   const result = await
     axios
       .get(
-        `${REACT_APP_CLOUD_FUNCTION_API_URL}/sessionsStatsApi/get-sessions-by?period=${period}&periodKey=${periodKey}&distanceMin=${distanceMin}&distanceMax=${distanceMax}&activityType=${activityType}`
+        `${VITE_CLOUD_FUNCTION_API_URL}/sessionsStatsApi/get-sessions-by?period=${period}&periodKey=${periodKey}&distanceMin=${distanceMin}&distanceMax=${distanceMax}&activityType=${activityType}`
       )
       .then((res) => res.data)
       .catch((err) => console.log("problem with querying APi getCitySessionsData", err));
@@ -238,7 +238,7 @@ export const getCitySessionsData = async ({
 export const fetchDashboardOrganisations = async ({ ownerType, ownerId, challengeId, startDate, endDate, branchId }) => {
   const res = await axios
     .get(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/statsApi/get-total-organisations?ownerType=${ownerType}&ownerId=${ownerId}&branchId=${branchId}&startDate=${startDate}&endDate=${endDate}&challenge=${challengeId}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/get-total-organisations?ownerType=${ownerType}&ownerId=${ownerId}&branchId=${branchId}&startDate=${startDate}&endDate=${endDate}&challenge=${challengeId}`
     )
     .then((res) => res.data)
     .catch((err) => { console.log(`error get-total-organisations : ${err}`) });
@@ -250,7 +250,7 @@ export const fetchDashboardOrganisations = async ({ ownerType, ownerId, challeng
 export const fetchCityDashboardOrganisationsForExport = async ({ ownerType, ownerId, challengeId, startDate, endDate, branchId }) => {
   const res = await axios
     .get(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/statsApi/get-total-organisations-with-activities?ownerType=${ownerType}&ownerId=${ownerId}&branchId=${branchId}&startDate=${startDate}&endDate=${endDate}&challenge=${challengeId}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/get-total-organisations-with-activities?ownerType=${ownerType}&ownerId=${ownerId}&branchId=${branchId}&startDate=${startDate}&endDate=${endDate}&challenge=${challengeId}`
     )
     .then((res) => res.data)
     .catch((err) => { console.log(`error get-total-organisations-with-activities : ${err}`) });
@@ -262,7 +262,7 @@ export const fetchCityDashboardOrganisationsForExport = async ({ ownerType, owne
 export const fetchCitySessionTracks = async ({ startDate, endDate, startTime, endTime, cityId }) => {
   const res = await axios
     .post(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/getSessionsTracks`,
+      `${VITE_CLOUD_FUNCTION_API_URL}/getSessionsTracks`,
       { startDate, endDate, startTime, endTime, cityId },
     )
     .then((res) => res.data)

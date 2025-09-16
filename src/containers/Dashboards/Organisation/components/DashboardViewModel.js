@@ -22,7 +22,7 @@ const LOG_TYPE = {
   range: "range",
 };
 
-const projectId = process.env.REACT_APP_FIREBASE_PROJECT_ID;
+const projectId = import.meta.env.VITE__FIREBASE_PROJECT_ID;
 
 export default class OrganisationDashboardViewModel extends Firebase {
   constructor(organisationID) {

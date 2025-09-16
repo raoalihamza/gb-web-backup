@@ -93,7 +93,7 @@ const Preview = ({ image, onRemoveFile, width = '100px', height = '100px', disab
   </ImagePreview>
 );
 
-const ImageUpload = ({ images, onChange, name, disabled }) => {
+const ImageUpload = ({ images, onChange, name, disabled, isSingleImage = false,  }) => {
   const onDrop = useCallback((acceptedFiles) => {
     const image = acceptedFiles[0];
 
@@ -107,12 +107,13 @@ const ImageUpload = ({ images, onChange, name, disabled }) => {
   }
 
   const firstImage = useMemo(() => images[0], [images])
+  const showDropdownForSingleImage = useMemo(() => isSingleImage ? images.length === 0: true, [isSingleImage, images])
   const [t] = useTranslation("common");
 
   return (
     <>
       {firstImage && <Preview image={images[0]} width='100%' height='300px' onRemoveFile={removeFile} disabled={disabled} />}
-      {images && Array.isArray(images) && (
+      {showDropdownForSingleImage && images && Array.isArray(images) && (
         <PreviewsContainer>
           {images.map((image) => <Preview key={image.name} image={image} onRemoveFile={removeFile} disabled={disabled} />)}
           <Dropzone

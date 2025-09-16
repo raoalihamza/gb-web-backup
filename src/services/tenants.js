@@ -30,7 +30,7 @@ import { TENANTS_STATUSES } from "constants/statuses";
 import { fi } from "date-fns/locale";
 
 
-const { REACT_APP_CLOUD_FUNCTION_API_URL } = process.env;
+const { VITE_CLOUD_FUNCTION_API_URL } = process.env;
 
 const firestore = getFirestore();
 const auth = firebase.auth();
@@ -672,7 +672,7 @@ export const sendOrderSentEmail = (orderId, tenantId) => {
 
   return auth.currentUser.getIdToken().then((token) => {
     axios.post(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/messagingApi/sendOrderSentEmail`,
+      `${VITE_CLOUD_FUNCTION_API_URL}/messagingApi/sendOrderSentEmail`,
       { orderId: orderId, tenantId: tenantId },
       {
         headers: {
@@ -699,7 +699,7 @@ export const deleteTenant = async (tenantId, status = 'pending') => {
   await auth.currentUser.getIdToken().then((token) => {
 
     return axios.post(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/app/v2/delete-doc-with-subCollections`,
+      `${VITE_CLOUD_FUNCTION_API_URL}/app/v2/delete-doc-with-subCollections`,
       { collectionPath: col, docId: tenantId },
       {
         headers: {
@@ -717,7 +717,7 @@ export const deleteTenant = async (tenantId, status = 'pending') => {
 export const moveTenantPendingData = async (pendingTenantId, newTenantId, updateDataForAllSubDocs) => {
   await auth.currentUser.getIdToken().then((token) => {
     return axios.post(
-      `${REACT_APP_CLOUD_FUNCTION_API_URL}/app/v2/move-subCollections`,
+      `${VITE_CLOUD_FUNCTION_API_URL}/app/v2/move-subCollections`,
       {
         fromCollectionPath: COLLECTION.Tenants,
         fromDocId: pendingTenantId,
@@ -756,7 +756,7 @@ export const createUserTransaction = async ({ productData, userData }) => {
     price: +productData.price || 0,
   };
 
-  await axios.post(`${REACT_APP_CLOUD_FUNCTION_API_URL}/app/v2/transaction/spend`, transactionData);
+  await axios.post(`${VITE_CLOUD_FUNCTION_API_URL}/app/v2/transaction/spend`, transactionData);
 };
 
 export const createProductTransactionsByAdmin = async ({ usersEmails, productData }) => {

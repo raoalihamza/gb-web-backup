@@ -70,7 +70,6 @@
 		"react-map-gl": "^8.0.4",
 		"react-redux": "^7.2.2",
 		"react-router-dom": "^5.2.0",
-		"react-scripts": "4.0.3",
 		"react-select": "^2.3.0",
 		"react-slick": "^0.23.2",
 		"react-smooth-scrollbar": "^8.0.6",
@@ -95,18 +94,20 @@
 		"xlsx": "^0.18.5"
 	},
 	"scripts": {
-		"start": "react-scripts --openssl-legacy-provider start",
-		"build": "react-scripts --openssl-legacy-provider build",
-		"start:greenplay": "firebase use greenplay | dotenv -e .env.greenplay npm run start",
-		"build:greenplay": "firebase use greenplay | dotenv -e .env.greenplay npm run build",
-		"start:dsa": "firebase use defisansautosolo | dotenv -e .env.dsa npm run start",
-		"build:dsa": "firebase use defisansautosolo | dotenv -e .env.dsa npm run build",
-		"start:sherbrooke": "firebase use sherbrooke | dotenv -e .env.sherbrooke npm run start",
-		"build:sherbrooke": "firebase use sherbrooke | dotenv -e .env.sherbrooke npm run build",
-		"start:greenplaytest": "firebase use greenplaytest | dotenv -e .env.greenplaytest npm run start",
-		"build:greenplaytest": "firebase use greenplaytest | dotenv -e .env.greenplaytest npm run build",
-		"test": "react-scripts test",
-		"eject": "react-scripts eject"
+		"dev": "vite",
+		"start": "vite",
+		"build": "vite build",
+		"preview": "vite preview",
+		"start:greenplay": "firebase use greenplay && dotenv -e .env.greenplay vite",
+		"build:greenplay": "firebase use greenplay && dotenv -e .env.greenplay vite build",
+		"start:dsa": "firebase use defisansautosolo && dotenv -e .env.dsa vite",
+		"build:dsa": "firebase use defisansautosolo && dotenv -e .env.dsa vite build",
+		"start:sherbrooke": "firebase use sherbrooke && dotenv -e .env.sherbrooke vite",
+		"build:sherbrooke": "firebase use sherbrooke && dotenv -e .env.sherbrooke vite build",
+		"start:greenplaytest": "firebase use greenplaytest && dotenv -e .env.greenplaytest vite",
+		"build:greenplaytest": "firebase use greenplaytest && dotenv -e .env.greenplaytest vite build",
+		"test": "vitest",
+		"test:ui": "vitest --ui"
 	},
 	"resolutions": {
 		"react-error-overlay": "6.0.9"
@@ -138,6 +139,7 @@
 		"@types/react-tooltip": "^4.2.4",
 		"@typescript-eslint/eslint-plugin": "^4.17.0",
 		"@typescript-eslint/parser": "^4.17.0",
+		"@vitejs/plugin-react": "^5.0.2",
 		"cross-env": "^7.0.3",
 		"dotenv-cli": "^7.4.2",
 		"eslint": "^7.21.0",
@@ -153,6 +155,7 @@
 		"eslint-plugin-react-hooks": "^4.2.0",
 		"eslint-plugin-testing-library": "^3.10.1",
 		"prettier": "^2.2.1",
-		"sass": "^1.52.3"
+		"sass": "^1.52.3",
+		"vite": "^7.1.5"
 	}
 }

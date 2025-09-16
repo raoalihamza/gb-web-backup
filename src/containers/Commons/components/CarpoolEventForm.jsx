@@ -10,6 +10,7 @@ import Toast from "shared/components/Toast";
 import styled from "styled-components";
 import { SearchBox } from "@mapbox/search-js-react";
 import { firebaseInstance } from "containers/firebase";
+import ImageUpload from "atomicComponents/ImageUpload";
 
 const Form = styled.form``;
 const ErrorSpan = styled.span`
@@ -28,6 +29,20 @@ const ButtonWrapper = styled(Row)`
     margin: 10px;
     max-width: 100%;
   }
+`;
+
+const ImagesWrapper = styled(Row)`
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  padding-left: 10px;
+  padding-bottom: 10px;
+`;
+
+const ImageWrapper = styled.div`
+  width: auto;
+  min-width: 300px;
+  margin-right: 16px;
 `;
 
 const FileInfo = styled.p`
@@ -63,10 +78,15 @@ const HiddenInput = styled.input`
 
 const CarpoolEventForm = ({ errors, onSubmit, handleAddCsv, initialValues = defaultValue, isLoading }) => {
   const { t, i18n } = useTranslation("common");
+  const [images, setImages] = useState([]);
 
   const { control, handleSubmit, reset, getValues } = useForm({
     defaultValues: initialValues,
   });
+
+  useEffect(() => {
+    setImages(initialValues.images || []);
+  }, [initialValues.images]);
 
   useEffect(() => {
     reset(initialValues);
@@ -94,18 +114,12 @@ const CarpoolEventForm = ({ errors, onSubmit, handleAddCsv, initialValues = defa
 
   return (
     <div>
-      <Button
-        color="primary"
-        type="button"
-        onClick={toggleCollapse}
-        style={{ margin: "10px" }}
-        outline
-      >
+      <Button color="primary" type="button" onClick={toggleCollapse} style={{ margin: "10px" }} outline>
         {isOpen ? t("dashboard_commerce.collapse") : t("dashboard_commerce.expand")}
       </Button>
 
       <Collapse isOpen={isOpen}>
-        <Form onSubmit={handleSubmit((data) => onSubmit({ ...data }))} id={FORM_ID}>
+        <Form onSubmit={handleSubmit((data) => onSubmit({ ...data, images }))} id={FORM_ID}>
           <Toast />
           <ButtonWrapper style={{ margin: 0 }}>
             <Button
@@ -131,6 +145,11 @@ const CarpoolEventForm = ({ errors, onSubmit, handleAddCsv, initialValues = defa
             {fileName && <FileInfo>{fileName}</FileInfo>}
             {errors && errors.carpoolersFile && <ErrorSpan>{errors.carpoolersFile[i18n.language]}</ErrorSpan>}{" "}
           </ButtonWrapper>
+          <ImagesWrapper style={{ margin: 0 }}>
+            <ImageWrapper>
+              <ImageUpload images={images} onChange={setImages} name="Logo" disabled={submitDisabled} isSingleImage />
+            </ImageWrapper>
+          </ImagesWrapper>
           <Row style={{ margin: 0 }}>
             <Controller
               name="title"
@@ -143,7 +162,9 @@ const CarpoolEventForm = ({ errors, onSubmit, handleAddCsv, initialValues = defa
                     onChange={field.onChange}
                     style={{ width: "auto" }}
                   />
-                  {errors && errors.title && <ErrorSpan style={{ marginLeft: "8px" }}>{errors.title[i18n.language]}</ErrorSpan>}
+                  {errors && errors.title && (
+                    <ErrorSpan style={{ marginLeft: "8px" }}>{errors.title[i18n.language]}</ErrorSpan>
+                  )}
                 </FieldWrapper>
               )}
             />
@@ -158,7 +179,9 @@ const CarpoolEventForm = ({ errors, onSubmit, handleAddCsv, initialValues = defa
                     onChange={field.onChange}
                     style={{ width: "auto" }}
                   />
-                  {errors && errors.eventUrl && <ErrorSpan style={{ marginLeft: "8px" }}>{errors.eventUrl[i18n.language]}</ErrorSpan>}
+                  {errors && errors.eventUrl && (
+                    <ErrorSpan style={{ marginLeft: "8px" }}>{errors.eventUrl[i18n.language]}</ErrorSpan>
+                  )}
                 </FieldWrapper>
               )}
             />
@@ -339,7 +362,7 @@ const CarpoolEventForm = ({ errors, onSubmit, handleAddCsv, initialValues = defa
                   <div style={{ margin: "8px", width: "205px" }}>
                     <FieldLabel label={t("dashboard_commerce.destination")} />
                     <SearchBox
-                      accessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
+                      accessToken={import.meta.env.VITE__MAPBOX_ACCESS_TOKEN}
                       options={
                         {
                           // country: "CA",
@@ -403,7 +426,9 @@ const CarpoolEventForm = ({ errors, onSubmit, handleAddCsv, initialValues = defa
                     onChange={field.onChange}
                     style={{ width: "auto" }}
                   />
-                  {errors && errors.destinationDetails && <ErrorSpan>{errors.destinationDetails[i18n.language]}</ErrorSpan>}
+                  {errors && errors.destinationDetails && (
+                    <ErrorSpan>{errors.destinationDetails[i18n.language]}</ErrorSpan>
+                  )}
                 </FieldWrapper>
               )}
             />
@@ -522,7 +547,9 @@ const CarpoolEventForm = ({ errors, onSubmit, handleAddCsv, initialValues = defa
                     }}
                     style={{ width: "auto" }}
                   />
-                  {errors && errors.maxMatchPerUser && <ErrorSpan style={{ marginLeft: "8px" }}>{errors.maxMatchPerUser[i18n.language]}</ErrorSpan>}
+                  {errors && errors.maxMatchPerUser && (
+                    <ErrorSpan style={{ marginLeft: "8px" }}>{errors.maxMatchPerUser[i18n.language]}</ErrorSpan>
+                  )}
                 </FieldWrapper>
               )}
             />
