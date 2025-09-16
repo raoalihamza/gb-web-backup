@@ -1,4 +1,5 @@
-import firebase from 'firebase/compat';
+// import firebase from 'firebase/compat';
+import { getFirestore, Timestamp } from 'firebase/firestore';
 import { Typography } from '@material-ui/core';
 import DropdownPicker from 'atomicComponents/DropDown';
 import { E_COMMERCE_DELIVERY_STATUSES } from 'constants/statuses';
@@ -38,7 +39,7 @@ const OrderStatus = ({deliveryStatus = E_COMMERCE_DELIVERY_STATUSES.needToBePrep
 
         if (updateData.deliveryStatus == "delivered") {
 
-          emailSentData = firebase.firestore.Timestamp.fromDate(new Date())
+          emailSentData = Timestamp.fromDate(new Date())
           Object.assign(updateData, { status: "completed", emailSentData: emailSentData});
           const sentEmail = sendOrderSentEmail(orderId, tenantId)
         }

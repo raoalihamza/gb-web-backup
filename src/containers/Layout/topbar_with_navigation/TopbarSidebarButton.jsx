@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-const icon = `${process.env.PUBLIC_URL}/img/burger.svg`;
+const icon = `/img/burger.svg`;
 
 class TopbarSidebarButton extends PureComponent {
 	render() {

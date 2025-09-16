@@ -5,7 +5,7 @@ import { getCountFromServer, where, collection, query, getFirestore } from "fire
 import { firestoreToArray } from "./helpers";
 import { COLLECTION } from "shared/strings/firebase";
 
-const { VITE_CLOUD_FUNCTION_API_URL } = process.env;
+const VITE_CLOUD_FUNCTION_API_URL = import.meta.env.VITE_CLOUD_FUNCTION_API_URL;
 
 export const TRANSACTION_COLLECTIONS = {
   greenpoint: 'greenpoint',

@@ -9,7 +9,7 @@ import batchUtils from "utils/batchUtils";
 import { addCloudTask } from "services/messaging";
 import dateUtils from "utils/dateUtils";
 
-const { VITE_CLOUD_FUNCTION_API_URL } = process.env;
+const VITE_CLOUD_FUNCTION_API_URL = import.meta.env.VITE_CLOUD_FUNCTION_API_URL;
 
 export default class NotificationsViewModel extends Firebase {
   constructor(t) {
@@ -37,7 +37,7 @@ export default class NotificationsViewModel extends Firebase {
         title: notificationData?.fr_title,
         contenu: notificationData?.fr_body,
         plannedOn: notificationData?.plannedOn?.toDate(),
-        notificationImage: notificationData?.imageUrl || `${process.env.PUBLIC_URL}/o/logo%2Flogo.png?alt=media`,
+        notificationImage: notificationData?.imageUrl || `/o/logo%2Flogo.png?alt=media`,
         createdOn: notificationData?.createdOn?.toDate(),
         updatedOn: notificationData?.updatedOn?.toDate(),
         isNotificationSent: notificationData?.isNotificationSent,
@@ -82,7 +82,7 @@ export default class NotificationsViewModel extends Firebase {
       contenu: notificationData?.fr_body,
       notificationName: notificationData?.name,
       notificationImage: {
-        imageUrl: notificationData?.imageUrl ?? `${process.env.PUBLIC_URL}/o/logo%2Flogo.png?alt=media`,
+        imageUrl: notificationData?.imageUrl ?? `/o/logo%2Flogo.png?alt=media`,
         name: notificationData?.imageName || `${import.meta.env.VITE_FIREBASE_PROJECT_ID}`,
       },
       notificationId: notification?.id,

@@ -4,7 +4,7 @@ import { firestoreToArray } from "./helpers";
 import firebase from "firebase/compat/app";
 import axios from "axios";
 
-const { VITE_CLOUD_FUNCTION_API_URL } = process.env;
+const VITE_CLOUD_FUNCTION_API_URL = import.meta.env.VITE_CLOUD_FUNCTION_API_URL;
 
 export const fetchOrganizationLimitSettings = (organizationID) => {
   const ref = firestore.collection(`organisations/${organizationID}/settings`).doc('limits');

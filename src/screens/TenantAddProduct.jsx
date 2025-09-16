@@ -10,7 +10,7 @@ import { useAuth } from "shared/providers/AuthProvider";
 import validateCreateProduct from "components/Tenant/validation/validationCreateProduct";
 import { COLLECTION } from "shared/strings/firebase";
 import { toast } from "shared/components/Toast";
-import { createTenantProduct, getTenantCategoryOptions, getTenantCollectionNameFromTenantStatus } from "services/tenants";
+import { createTenantProduct, getTenantCategoryOptions } from "services/tenants";
 import { generatedDownloadUrl, generatedFullImagePath, uploadImage } from "services/bucket-storage";
 import { useHistory } from "react-router-dom";
 import { routes } from "containers/App/Router";

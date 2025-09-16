@@ -42,7 +42,7 @@ class GES extends PureComponent {
 		const { t } = this.props;
 		// eslint-disable-next-line react/prop-types
 		const { ges } = this.props; // Use this array for displaying activity chart
-		const info = `${process.env.PUBLIC_URL}/img/info1.png`;
+		const info = `/img/info1.png`;
 		console.log(ges);
 		return (
 			<Col md={12} xl={4} lg={6} sm={12} xs={12}>

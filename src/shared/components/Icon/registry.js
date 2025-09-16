@@ -1,3 +1,5 @@
+import hamburgerSvg from '../../../assets/svg/burger.svg';
+
 export default Object.freeze({
-	hamburger: require('../../../assets/svg/burger.svg'),
+	hamburger: hamburgerSvg,
 });

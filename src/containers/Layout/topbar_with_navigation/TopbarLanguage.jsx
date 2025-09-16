@@ -4,7 +4,7 @@ import { Collapse } from 'reactstrap';
 import DownIcon from 'mdi-react/ChevronDownIcon';
 import PropTypes from 'prop-types';
 
-const de = `${process.env.PUBLIC_URL}/img/language/de.png`;
+const de = `/img/language/de.png`;
 
 const GbLng = () => (
 	<span className="topbar__language-btn-title">

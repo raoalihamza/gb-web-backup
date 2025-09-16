@@ -2,7 +2,7 @@ import axios from "axios";
 import { auth, firestore } from "containers/firebase";
 import { COLLECTION } from "shared/strings/firebase";
 
-const { VITE_CLOUD_FUNCTION_API_URL } = process.env;
+const VITE_CLOUD_FUNCTION_API_URL = import.meta.env.VITE_CLOUD_FUNCTION_API_URL;
 
 export const addCloudTask = async (task) => {
   if (!task) {

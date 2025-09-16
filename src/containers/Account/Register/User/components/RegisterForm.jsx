@@ -342,7 +342,7 @@ class RegisterForm extends PureComponent {
 				label: data.Activity_Name,
 			}),
 		);
-		const info = `${process.env.PUBLIC_URL}/img/info1.png`;
+		const info = `/img/info1.png`;
 		const isButtonDisabled = signUp.state === ActivityState.PENDING;
 		return (
 			<form

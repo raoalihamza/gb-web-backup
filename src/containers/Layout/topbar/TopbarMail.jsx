@@ -6,25 +6,25 @@ import MailIcon from 'mdi-react/MailIcon'
 
 const notifications = [
   {
-    ava: `${process.env.PUBLIC_URL}/img/topbar/ava.png`,
+    ava: `/img/topbar/ava.png`,
     name: 'Cristopher Changer',
     message: 'Good but communication was good e..',
     date: '09:02',
   },
   {
-    ava: `${process.env.PUBLIC_URL}/img/topbar/ava2.png`,
+    ava: `/img/topbar/ava2.png`,
     name: 'Sveta Narry',
     message: 'It is a long established fact that a read..',
     date: '09:00',
   },
   {
-    ava: `${process.env.PUBLIC_URL}/img/topbar/ava3.png`,
+    ava: `/img/topbar/ava3.png`,
     name: 'Lory McQueen',
     message: 'There are many variations of passages..',
     date: '08:43',
   },
   {
-    ava: `${process.env.PUBLIC_URL}/img/topbar/ava2.png`,
+    ava: `/img/topbar/ava2.png`,
     name: 'Cristopher Changer',
     message: 'Yas sent you an invitation to join proje..',
     date: '08:43',

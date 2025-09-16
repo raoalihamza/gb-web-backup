@@ -3,9 +3,10 @@ import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
+import commonjs from 'vite-plugin-commonjs';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), commonjs()],
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
@@ -21,6 +22,10 @@ export default defineConfig({
       'assets': resolve(__dirname, 'src/assets'),
       'constants': resolve(__dirname, 'src/constants'),
       'atomicComponents': resolve(__dirname, 'src/atomicComponents'),
+      // Add Redux back with more specific paths
+      'redux/selectors': resolve(__dirname, 'src/redux/selectors'),
+      'redux/actions': resolve(__dirname, 'src/redux/actions'),
+      'redux/reducers': resolve(__dirname, 'src/redux/reducers'),
       // Node.js polyfills
       crypto: 'crypto-browserify',
       stream: 'stream-browserify',
@@ -60,7 +65,9 @@ export default defineConfig({
     ],
     exclude: [
       'devextreme',
-      'devextreme-react'
+      'devextreme-react',
+      'devextreme-react/pie-chart',
+      'devextreme-react/chart'
     ],
     esbuildOptions: {
       plugins: [

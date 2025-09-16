@@ -10,7 +10,7 @@ import batchUtils from "utils/batchUtils";
 import { addCloudTask } from "services/messaging";
 import dateUtils from "utils/dateUtils";
 
-const { VITE_CLOUD_FUNCTION_API_URL } = process.env;
+const VITE_CLOUD_FUNCTION_API_URL = import.meta.env.VITE_CLOUD_FUNCTION_API_URL;
 
 export default class EmailsViewModel extends Firebase {
   constructor() {
@@ -18,31 +18,31 @@ export default class EmailsViewModel extends Firebase {
     this.emailDoc = this.firestore.collection(COLLECTION.emails).doc()
   }
 
-  async getEmails({uid, mainCollection}) {
+  async getEmails({ uid, mainCollection }) {
     const emails = await this.firestore
       .collection(mainCollection)
       .doc(uid)
       .collection(COLLECTION.emails)
       .get();
-      return Array.isArray(emails?.docs)
+    return Array.isArray(emails?.docs)
       ? emails.docs.map((email) => {
         const emailData = email?.data();
 
         return {
-            name: emailData?.emailName,
-            emailId: emailData?.id,
-            title: emailData?.title,
-            content: emailData?.body,
-            senderName: emailData?.senderName,
-            plannedOn: emailData?.plannedOn?.toDate(),
-            createdOn: emailData?.createdOn?.toDate(),
-            updatedOn: emailData?.updatedOn?.toDate(),
-          };
-        })
+          name: emailData?.emailName,
+          emailId: emailData?.id,
+          title: emailData?.title,
+          content: emailData?.body,
+          senderName: emailData?.senderName,
+          plannedOn: emailData?.plannedOn?.toDate(),
+          createdOn: emailData?.createdOn?.toDate(),
+          updatedOn: emailData?.updatedOn?.toDate(),
+        };
+      })
       : [];
   }
 
-  async getEmailsWithId({uid, emailId, mainCollection}) {
+  async getEmailsWithId({ uid, emailId, mainCollection }) {
     const email = await this.firestore
       .collection(mainCollection)
       .doc(uid)
@@ -61,11 +61,11 @@ export default class EmailsViewModel extends Firebase {
     return formatedData;
   }
 
-  async createEmail({uid, values, mainCollection}) {
+  async createEmail({ uid, values, mainCollection }) {
     const emailName = values.emailName;
 
-    const isEmailNameVerified = await this.verifyEmailsName({uid, emailName, mainCollection});
-    if(!isEmailNameVerified) {
+    const isEmailNameVerified = await this.verifyEmailsName({ uid, emailName, mainCollection });
+    if (!isEmailNameVerified) {
       throw ReferenceError("Already an email named " + emailName);
     }
 
@@ -76,7 +76,7 @@ export default class EmailsViewModel extends Firebase {
       .doc(this?.emailDoc?.id);
 
     const emailWithoutId = this.emailToFirestoreWithoutId(values);
-    const emailWithCreateDateAndId = {...emailWithoutId, createdOn: new Date(), id: newDoc.id};
+    const emailWithCreateDateAndId = { ...emailWithoutId, createdOn: new Date(), id: newDoc.id };
 
     newDoc.set(emailWithCreateDateAndId);
 
@@ -87,11 +87,11 @@ export default class EmailsViewModel extends Firebase {
       await addCloudTask(task)
     }
 
-    await this.fetchEmails({uid, mainCollection});
+    await this.fetchEmails({ uid, mainCollection });
     return newDoc;
   }
 
-  async deleteEmails({uid, emailId, mainCollection}) {
+  async deleteEmails({ uid, emailId, mainCollection }) {
     await this.firestore
       .collection(mainCollection)
       .doc(uid)
@@ -105,10 +105,10 @@ export default class EmailsViewModel extends Firebase {
         console.error("Error removing document: ", error);
       });
 
-    await this.fetchEmails({uid, mainCollection});
+    await this.fetchEmails({ uid, mainCollection });
   }
 
-  async updateEmail({uid, emailId, values, mainCollection}) {
+  async updateEmail({ uid, emailId, values, mainCollection }) {
     const emailWithoutId = this.emailToFirestoreWithoutId(values);
 
     this.firestore
@@ -119,7 +119,7 @@ export default class EmailsViewModel extends Firebase {
       .update(emailWithoutId);
   }
 
-  async verifyEmailsName({uid, emailName, mainCollection}) {
+  async verifyEmailsName({ uid, emailName, mainCollection }) {
     const duplicates = await this.firestore
       .collection(mainCollection)
       .doc(uid)
@@ -133,12 +133,12 @@ export default class EmailsViewModel extends Firebase {
     return true;
   }
 
-  async fetchEmails({uid, mainCollection}) {
-      const emails = await this.firestore
-        .collection(mainCollection)
-        .doc(uid)
-        .collection(COLLECTION.emails)
-        .get();
+  async fetchEmails({ uid, mainCollection }) {
+    const emails = await this.firestore
+      .collection(mainCollection)
+      .doc(uid)
+      .collection(COLLECTION.emails)
+      .get();
     await store.dispatch((dispatch, getState) => fetchEmails(dispatch, getState, emails));
   }
 
@@ -161,10 +161,10 @@ export default class EmailsViewModel extends Firebase {
     };
   }
 
-  async appendEmailToAllCityOrganisations({cityId, values, emailId, isCreate}) {
+  async appendEmailToAllCityOrganisations({ cityId, values, emailId, isCreate }) {
     const organisations = await getCityAllOrganisations(cityId);
     const emailWithoutId = this.emailToFirestoreWithoutId(values);
-    const emailWithCreateDateAndId = {...emailWithoutId, createdOn: new Date(), id: emailId}
+    const emailWithCreateDateAndId = { ...emailWithoutId, createdOn: new Date(), id: emailId }
     const tasks = [];
     const url = `${VITE_CLOUD_FUNCTION_API_URL}/messagingApi/sendEmail`;
 
@@ -198,26 +198,26 @@ export default class EmailsViewModel extends Firebase {
     await addCloudTask(tasks)
   }
 
-  async deleteEmailForAllCityOrganisations({cityId, emailId}) {
+  async deleteEmailForAllCityOrganisations({ cityId, emailId }) {
     const organisations = await getCityAllOrganisations(cityId);
     await batchUtils.batchLimitParallel({
       firestore: firestore,
       items: organisations,
       onEach: async (organisation, batch) => {
         const notificationRef = this.firestore
-        .collection(COLLECTION.Organisations)
-        .doc(organisation.id)
-        .collection(COLLECTION.emails)
-        .doc(emailId);
+          .collection(COLLECTION.Organisations)
+          .doc(organisation.id)
+          .collection(COLLECTION.emails)
+          .doc(emailId);
 
         batch.delete(notificationRef);
       }
     })
 
-    await this.fetchEmails({uid: cityId, mainCollection: COLLECTION.Cities});
+    await this.fetchEmails({ uid: cityId, mainCollection: COLLECTION.Cities });
   }
 
-  tableColumnData(t, onIconClick=()=>{}) {
+  tableColumnData(t, onIconClick = () => { }) {
     return [
       {
         Header: "#",
@@ -237,18 +237,18 @@ export default class EmailsViewModel extends Firebase {
       },
       {
         Header: t("emails.plandate"),
-        Cell: (tableProps) => tableProps.cell.value.toLocaleString('fr-CA', {dateStyle: 'long', timeStyle: 'short'}),
+        Cell: (tableProps) => tableProps.cell.value.toLocaleString('fr-CA', { dateStyle: 'long', timeStyle: 'short' }),
         sortType: "datetime",
         accessor: "plannedOn",
       },
       {
         Header: t("emails.content"),
         Cell: (tableProps) => (
-          <div 
-            onClick={()=>{
+          <div
+            onClick={() => {
               onIconClick(tableProps.cell.value);
             }}
-            style={{cursor: "pointer"}}
+            style={{ cursor: "pointer" }}
           >
             <DescriptionIcon fontSize="large" />
           </div>

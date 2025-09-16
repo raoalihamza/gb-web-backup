@@ -1,4 +1,5 @@
-import firebase from "firebase/compat";
+// import firebase from "firebase/compat";
+import { getFirestore, collection, query, where, getDocs, doc, deleteDoc, setDoc, Timestamp } from 'firebase/firestore';
 import { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
@@ -89,7 +90,7 @@ const AccessSettings = ({ details }) => {
           });
           return;
         }
-        values.createdOn = firebase.firestore.Timestamp.now();
+        values.createdOn = Timestamp.now();
         values[`${details.role}Id`] = details.id;
 
         const newUserId = await createPendingExternalUser(values);

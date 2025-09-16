@@ -4,7 +4,7 @@ import { COLLECTION } from "shared/strings/firebase";
 import { firestoreToArray } from "./helpers";
 import batchUtils from "utils/batchUtils";
 
-const { VITE_CLOUD_FUNCTION_API_URL } = process.env;
+const VITE_CLOUD_FUNCTION_API_URL= import.meta.env.VITE_CLOUD_FUNCTION_API_URL;
 
 // --- CACHE LOGIC ---
 const memoryCache = {};

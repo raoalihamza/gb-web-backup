@@ -48,8 +48,8 @@ class ModalComponent extends PureComponent {
 		const { color, title, t, colored, header, dataCollectionType } = this.props;
 		const { modal, datacollection } = this.state;
 		const accountNo = localStorage.getItem('loggedin_id');
-		const app = `${process.env.PUBLIC_URL}/img/Download_on_the_App_Store_Badge_FR_RGB_wht_100217.svg`;
-		const aicon = `${process.env.PUBLIC_URL}/img/google-fit-maxw-824.jpg`;
+		const app = `/img/Download_on_the_App_Store_Badge_FR_RGB_wht_100217.svg`;
+		const aicon = `/img/google-fit-maxw-824.jpg`;
 		let Icon;
 	
 		switch (color) {

@@ -5,7 +5,7 @@ import { getUserByID } from "services/users";
 import { convertActivitiesDistance, sumObjectKeys, globalObjectTranslated } from "utils";
 import anonyname from "anonynamer";
 
-const { default: ExcelColumn } = require("./ExcelColumn");
+import ExcelColumn from "./ExcelColumn";
 
 const getUsersListTableDescriptionDataForCSV = (t) => {
   return [

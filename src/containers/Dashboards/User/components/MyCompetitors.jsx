@@ -15,12 +15,12 @@ import {
 	getLogTypeAndKey,
 } from '../../../utils';
 
-// const Ava1 = `${process.env.PUBLIC_URL}/img/11.png`;
-// const Ava2 = `${process.env.PUBLIC_URL}/img/12.png`;
-// const Ava3 = `${process.env.PUBLIC_URL}/img/14.png`;
-// const Ava4 = `${process.env.PUBLIC_URL}/img/15.png`;
-// const Ava5 = `${process.env.PUBLIC_URL}/img/photo_notification.png`;
-// const Ava6 = `${process.env.PUBLIC_URL}/img/ava.png`;
+// const Ava1 = `/img/11.png`;
+// const Ava2 = `/img/12.png`;
+// const Ava3 = `/img/14.png`;
+// const Ava4 = `/img/15.png`;
+// const Ava5 = `/img/photo_notification.png`;
+// const Ava6 = `/img/ava.png`;
 
 class MyCompetitors extends PureComponent {
 	constructor(props) {

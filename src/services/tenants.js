@@ -5,7 +5,6 @@ import { firestoreToArray, getFirestoreContentWhereFieldInArray } from "./helper
 import firebase from "firebase/compat/app";
 import {
   getAggregateFromServer, sum, count, getFirestore,
-  getAuth,
   deleteDoc,
   collection,
   doc,
@@ -30,7 +29,7 @@ import { TENANTS_STATUSES } from "constants/statuses";
 import { fi } from "date-fns/locale";
 
 
-const { VITE_CLOUD_FUNCTION_API_URL } = process.env;
+const VITE_CLOUD_FUNCTION_API_URL = import.meta.env.VITE_CLOUD_FUNCTION_API_URL;
 
 const firestore = getFirestore();
 const auth = firebase.auth();

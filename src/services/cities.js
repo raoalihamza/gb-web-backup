@@ -5,7 +5,7 @@ import axios from "axios";
 import { TENANTS_STATUSES } from "constants/statuses";
 import { sleep } from "containers/utils";
 
-const { VITE_CLOUD_FUNCTION_API_URL } = process.env;
+const VITE_CLOUD_FUNCTION_API_URL = import.meta.env.VITE_CLOUD_FUNCTION_API_URL;
 
 export const getCityById = async (id) => {
   return firestore

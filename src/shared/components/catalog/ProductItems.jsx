@@ -3,8 +3,8 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-const Sale = `${process.env.PUBLIC_URL}/img/for_store/catalog/sale_lable.png`;
-const New = `${process.env.PUBLIC_URL}/img/for_store/catalog/new_lable.png`;
+const Sale = `/img/for_store/catalog/sale_lable.png`;
+const New = `/img/for_store/catalog/new_lable.png`;
 
 export default class Catalog extends PureComponent {
 	render() {

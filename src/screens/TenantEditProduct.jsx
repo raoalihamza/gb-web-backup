@@ -15,7 +15,6 @@ import {
   editTenantProduct,
   deleteTenantProduct,
   getTenantCategoryOptions,
-  getTenantCollectionNameFromTenantStatus,
 } from "services/tenants";
 import { generatedDownloadUrl, generatedFullImagePath, uploadImage } from "services/bucket-storage";
 import { useHistory } from "react-router-dom";

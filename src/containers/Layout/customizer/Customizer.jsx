@@ -13,7 +13,7 @@ import ToggleSquared from './ToggleSquared';
 import ToggleShadow from './ToggleShadow';
 import ToggleTopMenu from './ToggleTopMenu';
 
-const settings = `${process.env.PUBLIC_URL}/img/settings.svg`;
+const settings = `/img/settings.svg`;
 
 export default class Customizer extends PureComponent {
 	constructor(props) {

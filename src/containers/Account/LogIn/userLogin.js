@@ -9,7 +9,7 @@ import 'core-js/es';
 class UserLogIn extends PureComponent {
 	render() {
 		const { t } = this.props;
-		const logo = `${process.env.PUBLIC_URL}/img/logo/logo.png`;
+		const logo = `/img/logo/logo.png`;
 		return (
 			<div className="account">
 				<div className="account__wrapper">
