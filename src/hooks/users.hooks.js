@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect } from "react";
-import { getUserTransactionsBy, createPointsTransactions, TRANSACTION_COLLECTIONS, TRANSACTION_TYPES, getUserByID, fetchUsersFromCollection, updateUserAuthEmail, updateOrganisationUserAuthEmail } from "../services/users";
+import { getUserTransactionsBy, createPointsTransactions, TRANSACTION_COLLECTIONS, TRANSACTION_TYPES, getUserByID, fetchUsersFromCollection, updateUserAuthEmail } from "../services/users";
 import { useAuth } from "shared/providers/AuthProvider";
 import { useSelector } from "react-redux";
 import { isExternalUserSelector, isUserOrganisationSelector } from "redux/selectors/user";

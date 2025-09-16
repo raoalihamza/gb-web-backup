@@ -1,6 +1,46 @@
 {
   "compilerOptions": {
-    "baseUrl": "src"
+    "baseUrl": ".",
+    "paths": {
+      "src/*": [
+        "src/*"
+      ],
+      "services/*": [
+        "src/services/*"
+      ],
+      "shared/*": [
+        "src/shared/*"
+      ],
+      "hooks/*": [
+        "src/hooks/*"
+      ],
+      "containers/*": [
+        "src/containers/*"
+      ],
+      "components/*": [
+        "src/components/*"
+      ],
+      "screens/*": [
+        "src/screens/*"
+      ],
+      "utils/*": [
+        "src/utils/*"
+      ],
+      "assets/*": [
+        "src/assets/*"
+      ],
+      "redux/*": [
+        "src/redux/*"
+      ],
+      "constants/*": [
+        "src/constants/*"
+      ],
+      "atomicComponents/*": [
+        "src/atomicComponents/*"
+      ]
+    }
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

@@ -9,7 +9,19 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
-      // Node.js polyfills for your dependencies
+      // Add this to handle absolute imports from src
+      'src': resolve(__dirname, 'src'),
+      'services': resolve(__dirname, 'src/services'),
+      'shared': resolve(__dirname, 'src/shared'),
+      'hooks': resolve(__dirname, 'src/hooks'),
+      'containers': resolve(__dirname, 'src/containers'),
+      'components': resolve(__dirname, 'src/components'),
+      'screens': resolve(__dirname, 'src/screens'),
+      'utils': resolve(__dirname, 'src/utils'),
+      'assets': resolve(__dirname, 'src/assets'),
+      'constants': resolve(__dirname, 'src/constants'),
+      'atomicComponents': resolve(__dirname, 'src/atomicComponents'),
+      // Node.js polyfills
       crypto: 'crypto-browserify',
       stream: 'stream-browserify',
       util: 'util',
@@ -24,41 +36,31 @@ export default defineConfig({
     exclude: []
   },
   define: {
-    global: 'globalThis',
-    'process.env': 'process.env'
+    global: 'globalThis'
   },
   optimizeDeps: {
     include: [
-      // Core React
       'react',
       'react-dom',
-      // Firebase
       'firebase/app',
       'firebase/auth',
       'firebase/firestore',
-      'firebase/analytics',
-      // Heavy dependencies
       'crypto-browserify',
       '@material-ui/core',
       '@material-ui/icons',
-      'devextreme',
-      'devextreme-react',
       'recharts',
-      'react-big-calendar',
-      'react-csv',
-      'react-datepicker',
-      'react-color',
-      'react-select',
-      'react-toastify',
-      'react-map-gl',
-      'mapbox-gl',
-      // Utilities
       'lodash',
       'moment',
       'axios',
       'bootstrap',
       'reactstrap',
-      'smoothscroll-polyfill'
+      'smoothscroll-polyfill',
+      'jquery',
+      'popper.js'
+    ],
+    exclude: [
+      'devextreme',
+      'devextreme-react'
     ],
     esbuildOptions: {
       plugins: [
@@ -81,24 +83,30 @@ export default defineConfig({
   build: {
     outDir: 'build',
     sourcemap: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          // Split large dependencies into separate chunks
-          'material-ui': ['@material-ui/core', '@material-ui/icons'],
-          'devextreme': ['devextreme', 'devextreme-react'],
-          'firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
-          'charts': ['recharts', 'react-big-calendar'],
-          'vendor': ['lodash', 'moment', 'axios']
-        }
-      }
+    commonjsOptions: {
+      include: [/devextreme/, /node_modules/]
     }
   },
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `$injectedColor: orange;`
+        silenceDeprecations: ["legacy-js-api", "import", "global-builtin", "color-functions"],
+        charset: false // This fixes the charset conflict
       }
+    },
+    postcss: {
+      plugins: [
+        {
+          postcssPlugin: 'internal:charset-removal',
+          AtRule: {
+            charset: (atRule) => {
+              if (atRule.name === 'charset') {
+                atRule.remove();
+              }
+            }
+          }
+        }
+      ]
     }
   }
 })
