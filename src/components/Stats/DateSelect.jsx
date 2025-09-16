@@ -9,7 +9,7 @@ const Wrapper = styled.div`
   display: flex;
 `;
 
-const projectId = import.meta.env.VITE__FIREBASE_PROJECT_ID;
+const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
 
 const DateSelect = ({
   filterBy,

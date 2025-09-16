@@ -83,7 +83,7 @@ export default class NotificationsViewModel extends Firebase {
       notificationName: notificationData?.name,
       notificationImage: {
         imageUrl: notificationData?.imageUrl ?? `${process.env.PUBLIC_URL}/o/logo%2Flogo.png?alt=media`,
-        name: notificationData?.imageName || `${import.meta.env.VITE__FIREBASE_PROJECT_ID}`,
+        name: notificationData?.imageName || `${import.meta.env.VITE_FIREBASE_PROJECT_ID}`,
       },
       notificationId: notification?.id,
       plannedOn: notificationData?.plannedOn?.toDate(),
@@ -192,7 +192,7 @@ export default class NotificationsViewModel extends Firebase {
     const contenu = values.contenu;
     const notificationImage = !values.notificationImage || !values.notificationImage.imageUrl ? {
       imageUrl: `https://greenplay.social/wp-content/uploads/2021/06/Greenplay_Favicon.png`,
-      name: import.meta.env.VITE__FIREBASE_PROJECT_ID
+      name: import.meta.env.VITE_FIREBASE_PROJECT_ID
     } : values.notificationImage;
     const plannedOn = values.plannedOn;
     const testUsers = values.testUsers;

@@ -146,7 +146,7 @@ const activityTypeTranslation = {
   other: "Autres",
 };
 
-mapboxgl.accessToken = import.meta.env.VITE__MAPBOX_ACCESS_TOKEN;
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 const CitySessionsHeatMapPage = () => {
   const { t } = useTranslation("common");

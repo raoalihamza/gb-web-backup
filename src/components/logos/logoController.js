@@ -7,7 +7,7 @@ import logoGouv from '../../assets/images/QUEBEC_Participation_Web_Coul.png';
 
 export default function projectLogo({ isDashboard }) {
 
-    const project = import.meta.env.VITE__FIREBASE_PROJECT_ID;
+    const project = import.meta.env.VITE_FIREBASE_PROJECT_ID;
 
     let logo;
 

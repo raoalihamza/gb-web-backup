@@ -362,7 +362,7 @@ const CarpoolEventForm = ({ errors, onSubmit, handleAddCsv, initialValues = defa
                   <div style={{ margin: "8px", width: "205px" }}>
                     <FieldLabel label={t("dashboard_commerce.destination")} />
                     <SearchBox
-                      accessToken={import.meta.env.VITE__MAPBOX_ACCESS_TOKEN}
+                      accessToken={import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}
                       options={
                         {
                           // country: "CA",

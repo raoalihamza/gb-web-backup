@@ -9,7 +9,7 @@ export const generatedDownloadUrl = (imagePath, imageName) => {
 }
 
 export const generatedFullImagePath = (imagePath, imageName) => {
-  return `https://storage.googleapis.com/${import.meta.env.VITE__FIREBASE_STORAGE_BUCKET}/${imagePath}${imageName}`
+  return `https://storage.googleapis.com/${import.meta.env.VITE_FIREBASE_STORAGE_BUCKET}/${imagePath}${imageName}`
 }
 
 export const uploadImagesAndTransformToData = ({images, path = 'default-images-storage-path/'}) => {

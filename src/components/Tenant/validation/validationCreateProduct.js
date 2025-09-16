@@ -1,11 +1,11 @@
 import numberUtils from "utils/numberUtils";
 
 // const useIsEnglishAvailable = () => {
-//   const isEnglishAvailable = useMemo(() => import.meta.env.VITE__LANGUAGES?.split(",").includes("en"), []);
+//   const isEnglishAvailable = useMemo(() => import.meta.env.VITE_LANGUAGES?.split(",").includes("en"), []);
 //   return { isEnglishAvailable }
 // };
 
-//let languages = import.meta.env.VITE__LANGUAGES;
+//let languages = import.meta.env.VITE_LANGUAGES;
 
 const validateCreateProduct = (values, languages) => {
 

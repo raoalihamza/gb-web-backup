@@ -12,7 +12,7 @@ import RegisterViewModel from "./components/RegisterViewModel";
 import sharedHooks from "hooks/shared.hooks";
 import { useSelector } from "react-redux";
 
-const SUPPORT_EMAIL = import.meta.env.VITE__SUPPORT_EMAIL;
+const SUPPORT_EMAIL = import.meta.env.VITE_SUPPORT_EMAIL;
 
 function Register() {
   const { t } = useTranslation("common");

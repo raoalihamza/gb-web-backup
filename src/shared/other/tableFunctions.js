@@ -276,7 +276,7 @@ function mergeUserActivitiesAndData(data, userData) {
 const getUsersListCSVData = async (users, transportModes, branches, t, additionalData = {}, filterData) => {
   const { isOrganisation, filterByObject = {}, isChallengePage } = additionalData;
 
-  const isSherbrooke = import.meta.env.VITE__FIREBASE_PROJECT_ID == "greenplaysherbrooke";
+  const isSherbrooke = import.meta.env.VITE_FIREBASE_PROJECT_ID == "greenplaysherbrooke";
 
   const usersObject = users.reduce((acc, user) => {
     acc[user.userId] = user;

@@ -37,7 +37,7 @@ const DiscoveryTab = ({ discoveryOrganisationId }) => {
     const mapContainer = useRef(null);
     const mapRef = useRef(null);
 
-    const projectId = import.meta.env.VITE__FIREBASE_PROJECT_ID;
+    const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
     useEffect(() => {
         const fetchPlaces = async () => {
             const allPlaces = await getAllTouristPlaces(discoveryOrganisationId);

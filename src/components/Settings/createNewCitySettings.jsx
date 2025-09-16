@@ -4,7 +4,7 @@ import { ShareLinkOrg } from "shared/components/ShareLink";
 import { routes } from "containers/App/Router";
 import organizationHooks from "hooks/organization.hooks";
 
-const projectId = import.meta.env.VITE__FIREBASE_PROJECT_ID;
+const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
 
 const CreateNewCitySettings = ({ details, userID, isExternal, t }) => {
     const masterCityId = projectId == "greenplay-test-d85fa"

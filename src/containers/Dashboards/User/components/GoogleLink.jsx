@@ -8,9 +8,9 @@ import { withTranslation } from 'react-i18next';
 import Config from '../../../config';
 
 const GOOGLE_AUTHENTICATION_URL =
-	import.meta.env.VITE__GOOGLE_AUTHENTICATION_URL;
+	import.meta.env.VITE_GOOGLE_AUTHENTICATION_URL;
 const GOOGLE_AUTHENTICATION_URL_CODE =
-	import.meta.env.VITE__GOOGLE_AUTHENTICATION_URL_CODE;
+	import.meta.env.VITE_GOOGLE_AUTHENTICATION_URL_CODE;
 
 function getGoogleAuthenticationUrlWithAccountNumber(accountNo) {
 	return `${GOOGLE_AUTHENTICATION_URL}accountNo=${accountNo}&code=${GOOGLE_AUTHENTICATION_URL_CODE}`;

@@ -1,5 +1,5 @@
 export const getAppLanguages = () => {
-  const languages = import.meta.env.VITE__LANGUAGES || 'fr';
+  const languages = import.meta.env.VITE_LANGUAGES || 'fr';
 
   return languages.split(',');
 }

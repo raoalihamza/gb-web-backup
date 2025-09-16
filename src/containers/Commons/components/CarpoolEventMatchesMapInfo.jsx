@@ -22,7 +22,7 @@ const MapContainer = styled.div`
   height: 60%;
 `;
 
-mapboxgl.accessToken = import.meta.env.VITE__MAPBOX_ACCESS_TOKEN;
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 const CarpoolEventMatchesMapInfo = ({ carpoolMatches, carpoolRequests, carpoolEvent }) => {
   const { t } = useTranslation("common");
