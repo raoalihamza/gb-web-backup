@@ -201,7 +201,9 @@ class CityDashboardService {
           console.warn('Failed to fetch active users count:', err);
           return 0;
         }),
-        fetchDashboardTotalActivities(apiParams).catch(err => {
+        fetchDashboardTotalActivities(apiParams).then(result => {
+          return result;
+        }).catch(err => {
           console.warn('Failed to fetch total activities:', err);
           return {};
         }),

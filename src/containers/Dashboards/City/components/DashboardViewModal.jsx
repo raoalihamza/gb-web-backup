@@ -317,20 +317,25 @@ export default class DashboardViewModel extends Firebase {
   }
 
   formatActivityRatingData(unformattedData = {}, translation) {
-    return typeof unformattedData === "object" && unformattedData !== null
-      ? Object.entries(unformattedData)?.map(([name, item]) => ({
-        name: translation(`modeOfTransport.${name}`),
-        distance: (item?.totalDistance / 1000).toFixed(2),
-        sessionCount: item?.sessionCount ?? 0,
-        sustainableSessionCount: item?.sustainableSessionCount ?? 0,
-        calories: item?.totalCalories ?? 0,
-        greenhouseGazes: item?.totalGreenhouseGazes ?? 0,
-        greenhouseGazesSpent: item?.totalGreenhouseGazesSpent ?? 0,
-        greenpoints: item?.totalGreenpoints ?? 0,
-        time: item?.totalTime ?? 0,
-        color: colorMapping[name],
-      }))
+
+    const result = typeof unformattedData === "object" && unformattedData !== null
+      ? Object.entries(unformattedData)?.map(([name, item]) => {
+          return {
+            name: translation(`modeOfTransport.${name}`),
+            distance: parseFloat((item?.totalDistance / 1000).toFixed(2)) || 0,
+            sessionCount: item?.sessionCount ?? 0,
+            sustainableSessionCount: item?.sustainableSessionCount ?? 0,
+            calories: item?.totalCalories ?? 0,
+            greenhouseGazes: item?.totalGreenhouseGazes ?? 0,
+            greenhouseGazesSpent: item?.totalGreenhouseGazesSpent ?? 0,
+            greenpoints: item?.totalGreenpoints ?? 0,
+            time: item?.totalTime ?? 0,
+            color: colorMapping[name],
+          };
+        })
       : [];
+
+    return result;
   }
 
   // async formatUsers(usersResponse, filterBy, startDate, branch) {

@@ -47,13 +47,15 @@ function ActivityRating({ data, loading }) {
   const formattedData = dashboardViewModel.formatActivityRatingData(data, t);
 
   const dropdownItems = useMemo(
-    () =>
-      availableFieldsForPieChart.reduce((acc, next) => {
+    () => {
+      const items = availableFieldsForPieChart.reduce((acc, next) => {
         return acc.concat({
-          label: t(`challenge_goals.${[next]}`),
+          label: t(`challenge_goals.${next}`), // Fixed: removed [next] brackets
           value: next,
         });
-      }, []),
+      }, []);
+      return items;
+    },
     [t]
   );
 
@@ -78,11 +80,14 @@ function ActivityRating({ data, loading }) {
   ) : (
     <CardBox padding="0" >
       <Panel title={t("dashboard_fitness.activity_rating")}>
-        <div className="" style={{ position: "absolute", top: "85px", left: "40px" }}>
+        <div className="" style={{ position: "absolute", top: "85px", left: "40px", zIndex: 1000 }}>
           <DropdownPicker
             value={selectedChartBase}
             items={dropdownItems}
-            onChange={(item) => setSelectedChartBase(item)}
+            onChange={(item) => {
+              setSelectedChartBase(item);
+            }}
+            style={{ minWidth: "150px" }}
           />
         </div>
         <ActivityRatingPieChart

@@ -36,9 +36,10 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
   ) : null;
 };
 
-const CustomTooltip = ({ active, payload }) => {
+const CustomTooltip = ({ active, payload, dataKey }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
+    const value = data[dataKey] || payload[0].value;
     return (
       <div style={{
         backgroundColor: 'white',
@@ -49,7 +50,7 @@ const CustomTooltip = ({ active, payload }) => {
       }}>
         <p style={{ margin: 0, fontWeight: 'bold' }}>{data.name}</p>
         <p style={{ margin: 0, color: payload[0].color }}>
-          {`Value: ${data.value}`}
+          {`Value: ${value}`}
         </p>
       </div>
     );
@@ -130,7 +131,7 @@ export default function ActivityRatingPieChart({
   return (
     <ResponsiveContainer width="100%" height={height}>
       <PieChart>
-        {showTooltip && <Tooltip content={<CustomTooltip />} />}
+        {showTooltip && <Tooltip content={<CustomTooltip dataKey={dataKey} />} />}
 
         <Pie
           data={filteredData}

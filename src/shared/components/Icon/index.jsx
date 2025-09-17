@@ -39,7 +39,7 @@ const _Icon = React.forwardRef(
 			() => (
 				<img
 					className={classnames('vendor-icon', className)}
-					src={registry[name]?.default}
+					src={registry[name]}
 					alt={altName}
 					style={{
 						cursor: pointer ? 'pointer' : 'default',
