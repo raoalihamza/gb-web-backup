@@ -11,7 +11,7 @@ const ExportXLSX = ({
 }) => {
   const handleExport = () => {
     // Vérifiez si les données existent
-    if (!sheet1Data.length && !sheet2Data.length) {
+    if ((!sheet1Data || !sheet1Data.length) && (!sheet2Data || !sheet2Data.length)) {
       console.error("No data available to export");
       return;
     }
@@ -22,13 +22,13 @@ const ExportXLSX = ({
     const workbook = XLSX.utils.book_new();
 
     // Ajouter la première feuille si les données existent
-    if (sheet1Data.length) {
+    if (sheet1Data && sheet1Data.length) {
       const sheet1 = XLSX.utils.json_to_sheet(sheet1Data);
       XLSX.utils.book_append_sheet(workbook, sheet1, sheet1Title);
     }
 
     // Ajouter la deuxième feuille si les données existent
-    if (sheet2Data.length) {
+    if (sheet2Data && sheet2Data.length) {
       const sheet2 = XLSX.utils.json_to_sheet(sheet2Data);
       XLSX.utils.book_append_sheet(workbook, sheet2, sheet2Title);
     }
