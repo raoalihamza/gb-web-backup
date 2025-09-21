@@ -201,20 +201,19 @@ class CityDashboardService {
           console.warn('Failed to fetch active users count:', err);
           return 0;
         }),
-        fetchDashboardTotalActivities(apiParams).then(result => {
-          return result;
-        }).catch(err => {
-          console.warn('Failed to fetch total activities:', err);
-          return {};
-        }),
-        fetchDashboardTotalPeriods(apiParams).catch(err => {
-          console.warn('Failed to fetch total periods:', err);
-          return {};
-        }),
-        fetchDashboardTotalUsers(apiParams).catch(err => {
-          console.warn('Failed to fetch total users:', err);
-          return [];
-        })
+        // fetchDashboardTotalActivities(apiParams).then(result => {
+        //   return result;
+        // }).catch(err => {
+        //   console.warn('Failed to fetch total activities:', err);
+        //   return {};
+        // }),
+        // fetchDashboardTotalPeriods(apiParams).catch(err => {
+        //   console.warn('Failed to fetch total periods:', err);
+        //   return {};
+        // }),
+        Promise.resolve({}), // totalActivities - now handled by LazyActivitiesSection
+        Promise.resolve({}), // totalPeriods - now handled by LazyActivitiesSection
+        Promise.resolve([]) // totalUsers - now handled by LazyUsersTableSection
       ]);
 
       return {

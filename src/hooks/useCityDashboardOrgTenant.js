@@ -11,7 +11,9 @@ export const useCityDashboardOrgTenant = ({
   startDate,
   endDate,
   logType,
-  organisations = {}
+  organisations = {},
+  skipUsersData = false,
+  skipTenantsData = false
 }) => {
   const [tenantsListRowsData, setTenantsListRowsData] = useState([]);
   const [allOrganisationsUsersWithEmptyUsers, setAllOrganisationsUsersWithEmptyUsers] = useState([]);
@@ -90,12 +92,21 @@ export const useCityDashboardOrgTenant = ({
       return;
     }
 
-    // Fetch both tenant data and organization users in parallel
-    await Promise.all([
-      fetchTenantData(),
-      fetchOrganizationUsers()
-    ]);
-  }, [fetchTenantData, fetchOrganizationUsers, cityId]);
+    // Conditionally fetch tenant data and organization users
+    const promises = [];
+
+    if (!skipTenantsData) {
+      promises.push(fetchTenantData());
+    }
+
+    if (!skipUsersData) {
+      promises.push(fetchOrganizationUsers());
+    }
+
+    if (promises.length > 0) {
+      await Promise.all(promises);
+    }
+  }, [fetchTenantData, fetchOrganizationUsers, cityId, skipUsersData, skipTenantsData]);
 
   // Effect to trigger fetching when parameters change
   useEffect(() => {

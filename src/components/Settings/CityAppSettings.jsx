@@ -51,8 +51,10 @@ const CityAppSettings = ({ cityId, disabled }) => {
     period: null,
   });
 
-  const [c18_admin_email_order, setAdminEmailOrder] = useState("");
-  const [c18_admin_email, setAdminEmail] = useState("");
+  const [c18_admin_email, setAdminEmail] = useState({
+    email: "",
+    email_order_granted: false,
+  });
   const [c14_greenpoint_coefficient, setGreenpointsCoefficient] = useState("");
   const [c16_invite_organisation, setInviteOrganisation] = useState("");
   const [u7_control_points, setControlPoints] = useState({ limitGreenpointToControlPoints: false, limitedCoefficient: 1, granted: false });
@@ -101,11 +103,7 @@ const CityAppSettings = ({ cityId, disabled }) => {
       }
 
       if (c18_admin_email) {
-        setAdminEmailOrder(c18_admin_email.email_order)
-      }
-
-      if (c18_admin_email) {
-        setAdminEmail(c18_admin_email.email)
+        setAdminEmail(c18_admin_email)
       }
 
       if (c11_maximum_session) {
@@ -350,56 +348,119 @@ const CityAppSettings = ({ cityId, disabled }) => {
         </Grid>
       </Grid>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
+        <Grid item xs={6} md={4}>
           <GridRow>
-            <SettingName>
-              {t("settings.order_admin_email")}
-            </SettingName>
-            <SettingDetails>
-              <Trans i18nKey="settings.order_admin_email_details">
-                {t("settings.order_admin_email_details")}
-              </Trans>
-            </SettingDetails>
+            <SettingName>{t("settings.activate_order_admin_email")}</SettingName>
           </GridRow>
         </Grid>
-        <Grid item xs={12} md={8}>
-          <Grid container spacing={3} alignItems="center">
-            <Grid item xs={6} >
-              <TextField
-                value={c18_admin_email_order}
-                onChange={(event) => setAdminEmailOrder(event.target.value)}
-                variant="outlined"
-                size="small"
-                type="text"
-                disabled={disabled}
-              />
-            </Grid>
+        <Grid item xs={6} md={8}>
 
-            <Grid item>
-              <Button
-                style={{ margin: 0 }}
-                size="sm"
-                color="primary"
-                disabled={disabled}
-                onClick={
-                  c18_admin_email_order ?
-                    () => onSubmit("c18_admin_email", {
-                      granted: true,
-                      email_order: String(c18_admin_email_order)
-                    }) :
-                    () => onSubmit("c18_admin_email", {
-                      granted: false,
-                      email_order: ""
-                    })
+          <Grid item xs={2}>
+            <FormControlLabel
+              onChange={async (event) => {
+                const newGrantedValue = event.target.checked;
+                setAdminEmail((prev) => ({ ...prev, email_order_granted: newGrantedValue }));
+                try {
+                  await onSubmit("c18_admin_email", { email_order_granted: newGrantedValue });
+                } catch (error) {
+                  console.error("Failed to update email_order_granted in the database", error);
                 }
-              >
-                {t("forms.submit")}
-              </Button>
-            </Grid>
+              }}
+              control={
+                <Checkbox
+                  checked={!!c18_admin_email.email_order_granted}
+                  value={!!c18_admin_email.email_order_granted}
+                  color="primary"
+                />
+              }
+            />
           </Grid>
         </Grid>
       </Grid>
+      {c18_admin_email.email_order_granted && (
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={4}>
+            <GridRow>
+              <SettingName>
+                {t("settings.order_admin_email")}
+              </SettingName>
+              <SettingDetails>
+                <Trans i18nKey="settings.order_admin_email_details">
+                  {t("settings.order_admin_email_details")}
+                </Trans>
+              </SettingDetails>
+            </GridRow>
+          </Grid>
+          <Grid item xs={12} md={8}>
+            <Grid container spacing={3} alignItems="center">
+              <Grid item xs={6} >
+                <TextField
+                  value={c18_admin_email.email_order}
+                  onChange={(event) => setAdminEmail({ ...c18_admin_email, email_order: event.target.value })}
+                  variant="outlined"
+                  size="small"
+                  type="text"
+                  disabled={disabled}
+                />
+              </Grid>
+
+              <Grid item>
+                <Button
+                  style={{ margin: 0 }}
+                  size="sm"
+                  color="primary"
+                  disabled={disabled}
+                  onClick={
+                    c18_admin_email.email_order_granted ?
+                      () => onSubmit("c18_admin_email", {
+                        email_order_granted: true,
+                        email_order: String(c18_admin_email.email_order)
+                      }) :
+                      () => onSubmit("c18_admin_email", {
+                        email_order_granted: false,
+                        email_order: ""
+                      })
+                  }
+                >
+                  {t("forms.submit")}
+                </Button>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      )}
       <Grid container spacing={3}>
+        <Grid item xs={6} md={4}>
+          <GridRow>
+            <SettingName>{t("settings.activate_user_report_admin_email")}</SettingName>
+          </GridRow>
+        </Grid>
+        <Grid item xs={6} md={8}>
+
+          <Grid item xs={2}>
+            <FormControlLabel
+              onChange={async (event) => {
+                const newGrantedValue = event.target.checked;
+                setAdminEmail((prev) => ({ ...prev, granted: newGrantedValue }));
+                try {
+                  await onSubmit("c18_admin_email", { granted: newGrantedValue });
+                } catch (error) {
+                  console.error("Failed to update email_order_granted in the database", error);
+                }
+              }}
+              control={
+                <Checkbox
+                  checked={!!c18_admin_email.granted}
+                  value={!!c18_admin_email.granted}
+                  color="primary"
+                />
+              }
+            />
+
+          </Grid>
+        </Grid>
+      </Grid>
+      {c18_admin_email.granted && (<Grid container spacing={3}>
         <Grid item xs={12} md={4}>
           <GridRow>
             <SettingName>
@@ -416,8 +477,8 @@ const CityAppSettings = ({ cityId, disabled }) => {
           <Grid container spacing={3} alignItems="center">
             <Grid item xs={6} >
               <TextField
-                value={c18_admin_email}
-                onChange={(event) => setAdminEmail(event.target.value)}
+                value={c18_admin_email.email}
+                onChange={(event) => setAdminEmail({ ...c18_admin_email, email: event.target.value })}
                 variant="outlined"
                 size="small"
                 type="text"
@@ -432,10 +493,10 @@ const CityAppSettings = ({ cityId, disabled }) => {
                 color="primary"
                 disabled={disabled}
                 onClick={
-                  c18_admin_email ?
+                  c18_admin_email.granted ?
                     () => onSubmit("c18_admin_email", {
                       granted: true,
-                      email: String(c18_admin_email)
+                      email: String(c18_admin_email.email)
                     }) :
                     () => onSubmit("c18_admin_email", {
                       granted: false,
@@ -449,52 +510,7 @@ const CityAppSettings = ({ cityId, disabled }) => {
           </Grid>
         </Grid>
       </Grid>
-      <Grid container spacing={3}>
-        <Grid item xs={6} md={4}>
-          <GridRow>
-            <SettingName>{t("settings.activate_order_admin_email")}</SettingName>
-          </GridRow>
-        </Grid>
-        <Grid item xs={6} md={8}>
-
-          <Grid item xs={2}>
-            <FormControlLabel
-              onChange={(event) =>
-                setControlPoints((prev) => {
-                  return { ...prev, granted: event.target.checked };
-                })
-              }
-              control={
-                <Checkbox checked={!!u7_control_points.granted} value={!!u7_control_points.granted} color="primary" />
-              }
-            />
-          </Grid>
-
-
-        </Grid>
-      </Grid>
-      <Grid container spacing={3}>
-        <Grid item xs={6} md={4}>
-          <GridRow>
-            <SettingName>{t("settings.activate_user_report_admin_email")}</SettingName>
-          </GridRow>
-        </Grid>
-        <Grid item xs={6} md={8}>
-
-          <Grid item xs={2}>
-            <FormControlLabel
-              onChange={(event) =>
-                setControlPoints((prev) => {
-                  return { ...prev, granted: event.target.checked };
-                })
-              }
-              control={
-                <Checkbox checked={!!u7_control_points.granted} value={!!u7_control_points.granted} color="primary" />
-              }
-            />
-          </Grid>
-        </Grid>
-      </Grid>
+      )}
       <Spacer />
       <Grid container spacing={3}>
         <Grid item xs={6} md={4}>

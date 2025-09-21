@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState, Suspense } from "react";
 import { Button, Col, Row } from "reactstrap";
 import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 import { useSelector } from "react-redux";
 import classnames from "classnames";
 
@@ -18,7 +19,10 @@ import ChallengesPreview from "../../components/ChallengesPreview";
 import { getConnectedCityTenants, getTenantTransactionsByTime } from "services/tenants";
 import dateUtils, { DATE_FORMATS } from "utils/dateUtils";
 import { ShortDashboardWidget, ShortTwoDashboardWidget, ShortMultipleDashboardWidget } from "shared/components/ShortDashboardWidget";
+
+// Lazy load only the users table section since it's below the fold
 import DataTableWithExportToCSV from "shared/components/dataTable/DataTableWithExportToCSV";
+const UsersTableSection = React.lazy(() => import("./UsersTableSection"));
 import numberUtils from "utils/numberUtils";
 import { Link, useHistory } from "react-router-dom";
 import tableFunctions from "shared/other/tableFunctions";
@@ -50,6 +54,10 @@ import { useCityDashboardData } from "hooks/useCityDashboardData";
 import { useCityDashboardCarpool } from "hooks/useCityDashboardCarpool";
 import { useCityDashboardOrgTenant } from "hooks/useCityDashboardOrgTenant";
 
+import {
+  LazyActivitiesSection
+} from './LazyActivitiesSection';
+
 //const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID;
 
 export default function Dashboard() {
@@ -76,6 +84,16 @@ export default function Dashboard() {
   const [selectedChallengeId, setSelectedChallengeId] = useState(storeFilterBy.selectedChallengeId);
   const downloadUsersExcelButtonRef = useRef();
   const [loadingUsers, setLoadingUsers] = useState(false);
+
+  // Lazy loading state for UsersTableSection
+  const [shouldRenderUsersTable, setShouldRenderUsersTable] = useState(false);
+  const [hasTriggeredUsersTable, setHasTriggeredUsersTable] = useState(false);
+  const usersTablePlaceholderRef = useRef(null);
+
+  // Lazy loading state for TenantsTableSection
+  const [shouldRenderTenantsTable, setShouldRenderTenantsTable] = useState(false);
+  const [hasTriggeredTenantsTable, setHasTriggeredTenantsTable] = useState(false);
+  const tenantsTablePlaceholderRef = useRef(null);
   const matches = limitSettings?.c19_carpooling_app?.can_see_matches
     ? carpoolMatchesListRowsData
     : [];
@@ -112,19 +130,21 @@ export default function Dashboard() {
   const {
     tenantsListRowsData,
     allOrganisationsUsersWithEmptyUsers,
-    // allTransactionsCount,
-    // loading: orgTenantLoading,
+    allTransactionsCount,
+    loading: orgTenantLoading,
     // setTenantsListRowsData,
     // setAllOrganisationsUsersWithEmptyUsers,
     // setAllTransactionsCount,
-    refreshOrgTenantData
+    refreshOrgTenantData,
+    fetchTenantData
   } = useCityDashboardOrgTenant({
     cityId: userID,
     filterBy,
     startDate,
     endDate,
     logType: filterBy?.logType,
-    organisations: organisations || {}
+    organisations: organisations || {},
+    skipTenantsData: !shouldRenderTenantsTable  // Skip tenant data until needed
   });
 
   // Replace carpool hooks with coordinated hook
@@ -157,14 +177,13 @@ export default function Dashboard() {
     dashboardViewModel,
     cityId: userID,
     limitSettings,
-    allOrganisationsUsersWithEmptyUsers,
+    // allOrganisationsUsersWithEmptyUsers,
     t,
     i18next
   });
 
   const { filterComponent: filterComponentPerDay, filteredSessionsRows: filteredSessionPerDay } = commonHooks.useFilterSessionPerDay(carpoolSessionsList);
 
-  // Replace multiple individual hooks with coordinated dashboard data hook
   const {
     sustainableDistance,
     totalGHG,
@@ -172,26 +191,13 @@ export default function Dashboard() {
     totalGreenpoints,
     totalAllGreenpoints,
     totalActiveUsersCount,
-    totalActivities,
-    totalPeriods,
-    totalUsers,
     sustainableDistanceLoading,
     ghgLoading,
     sustainableSessionsLoading,
     totalGreenpointsLoading,
     allGreenpointsLoading,
     activeUsersLoading,
-    activitiesLoading,
-    periodsLoading,
     usersLoading,
-    // setSustainableDistance,
-    // setTotalGHG,
-    // setTotalSustainableSessions,
-    // setTotalGreenpoints,
-    // setTotalActiveUsersCount,
-    // setTotalActivities,
-    // setTotalPeriods,
-    // setTotalUsers,
     refreshData: refreshDashboardData
   } = useCityDashboardData({
     ownerType: 'city',
@@ -202,7 +208,8 @@ export default function Dashboard() {
     filterBy,
     branchId: branch,
   });
-  console.log('reload')
+
+
   useEffect(() => {
     dashboardViewModel.getAllChallengesWithEndNotEarlierWeekAgo().then(data => {
       const idName = {};
@@ -235,8 +242,10 @@ export default function Dashboard() {
   // Simplified getStatistics function - now mainly for resetting state when needed
   const getStatistics = useCallback(() => {
     if (filterBy.logType === 'range' && (!startDate || !endDate)) {
-      // Reset coordinated hook data when range parameters are invalid
-      refreshDashboardData();
+      // Reset when range parameters are invalid
+      if (refreshDashboardData) {
+        refreshDashboardData();
+      }
       return;
     }
   }, [filterBy.logType, startDate, endDate, refreshDashboardData]);
@@ -252,6 +261,96 @@ export default function Dashboard() {
       isUnmounted = true;
     };
   }, [dashboardViewModel, filterBy?.logType, getStatistics, selectedChallengeId]);
+
+  // Lazy loading for UsersTableSection
+  useEffect(() => {
+    if (hasTriggeredUsersTable) return;
+
+    const checkIfUsersTableInView = () => {
+      const element = usersTablePlaceholderRef.current;
+      if (!element) {
+        console.log('Users table element not found - placeholder may not be rendered yet');
+        return;
+      }
+
+      const rect = element.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const scrollY = window.scrollY;
+
+      // Very conservative detection - element must be significantly in viewport
+      // Only trigger when user has scrolled so element is at least 300px from bottom
+      const isInView = (
+        rect.top < windowHeight - 300 &&
+        rect.bottom > 100
+      );
+
+      if (isInView && !hasTriggeredUsersTable) {
+        setHasTriggeredUsersTable(true);
+        setShouldRenderUsersTable(true);
+      }
+    };
+
+    const handleScroll = () => {
+      checkIfUsersTableInView();
+    };
+
+    // NO immediate checks - only scroll-based detection
+    // This ensures lazy loading only happens when user actually scrolls
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [hasTriggeredUsersTable]);
+
+  // Lazy loading for TenantsTableSection (exact same pattern as UsersTableSection)
+  useEffect(() => {
+    if (hasTriggeredTenantsTable) return;
+
+    const checkIfTenantsTableInView = () => {
+      const element = tenantsTablePlaceholderRef.current;
+      if (!element) {
+        return;
+      }
+
+      const rect = element.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      // Conservative detection - element must be significantly in viewport
+      // Only trigger when user has scrolled so element is at least 300px from bottom
+      const isInView = (
+        rect.top < windowHeight - 300 &&
+        rect.bottom > 100
+      );
+
+      if (isInView && !hasTriggeredTenantsTable) {
+        setHasTriggeredTenantsTable(true);
+        setShouldRenderTenantsTable(true);
+        // Trigger tenant data fetch when lazy loading is activated
+        if (fetchTenantData) {
+          fetchTenantData();
+        }
+      }
+    };
+
+    const handleScroll = () => {
+      checkIfTenantsTableInView();
+    };
+
+    // NO immediate checks - only scroll-based detection
+    // This ensures lazy loading only happens when user actually scrolls
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [hasTriggeredTenantsTable]);
 
   // useEffect(() => {
   //   if (!mapped?.logType || filterBy?.logType === 'challenges') return;
@@ -432,33 +531,7 @@ export default function Dashboard() {
     setUserDataForCsv(csvData);
   }, [allOrganisationsUsersWithEmptyUsers, branch, branches, dashboardViewModel, endDate, filterBy?.logType, i18next.store.data.en.common.modeOfTransport, startDate, t, userID]);
 
-  const usersListTableDescriptionDataForCSV = useMemo(() => tableFunctions.getUsersListTableDescriptionDataForCSV(t), [t])
-  const usersTableCustomColumns = useMemo(() => tableFunctions.getUsersTableCustomColumns(t), [t])
-
-  const usersListRowsData = useMemo(() => {
-    const allUserInCityOrganizations = totalUsers
-    return allUserInCityOrganizations
-      .filter(user => typeof user === 'object')
-      .map((rowData, index) => {
-        let totalGreenhouseGazes = numberUtils.normalizeNumber(rowData?.totalGreenhouseGazes, 3);
-        let totalDistance = numberUtils.normalizeNumber(rowData?.totalDistance / 1000, 3);
-
-        return {
-          key: index + 1,
-          name: rowData?.userFullName || rowData?.fullName || t("global.unknown"),
-          email: rowData?.user?.email || t("global.unknown"),
-          ghg: totalGreenhouseGazes || 0,
-          dist: totalDistance || 0,
-          branch: branches?.[rowData?.user?.branchId] || "",
-          activeDays: rowData?.days || "",
-          userId: rowData.userId,
-          lastConnection: rowData?.lastLogin?.value || "",
-          organisationName: rowData?.organisationName || "",
-          branchName: rowData?.branchName || "",
-          packageName: rowData?.packageName || []
-        };
-      });
-  }, [totalUsers, branches, t]);
+  // Users table data processing moved to LazyUsersTableSection
 
   const onClickUserRow = useCallback(
     ({ userId, driverId }) => {
@@ -572,8 +645,6 @@ export default function Dashboard() {
       return;
     }
 
-    console.log('refreshing')
-
     localStorage.setItem(localKey, JSON.stringify({
       ...localStored,
       refreshed: true,
@@ -581,9 +652,9 @@ export default function Dashboard() {
     }));
 
     // Clear all coordinated hook caches and refresh data
-    refreshDashboardData();
-    refreshOrgTenantData();
-    refreshCarpoolData();
+    if (refreshDashboardData) refreshDashboardData();
+    if (refreshOrgTenantData) refreshOrgTenantData();
+    if (refreshCarpoolData) refreshCarpoolData();
   }, [userID, refreshDashboardData, refreshOrgTenantData, refreshCarpoolData]);
 
   // onChangeCarpoolSessionItem is now handled by useCityDashboardCarpool hook
@@ -633,9 +704,10 @@ export default function Dashboard() {
           </span>
         </Col>
       </Row>
-      {/* {!loading ? ( */}
-      <>
 
+      {/* {!loading ? ( */}
+
+      <>
         <Row>
           <Col lg={8}>
             <Row>
@@ -696,6 +768,7 @@ export default function Dashboard() {
             )}
           </Col>
         </Row>
+
         {limitSettings?.c19_carpooling_app?.granted && (
           <Row>
 
@@ -714,125 +787,210 @@ export default function Dashboard() {
             </Col>
           </Row>
         )}
-        {limitSettings?.c19_carpooling_app?.greenplay_addon &&
-          <Row>
-            <Col className="card" lg={6} xl={6} md={12}>
-              <TripCards isLoading={activitiesLoading} activities={totalActivities} />
-            </Col>
-            <Col className="card" lg={6} xl={6} md={12}>
-              <ActivityChart
-                data={totalPeriods}
-                logType={filterBy?.logType}
-                loading={periodsLoading}
-              />
-              <ActivityRating data={totalActivities} isLoading={activitiesLoading} />
-            </Col>
-          </Row>
-        }
+
+        <LazyActivitiesSection
+          ownerType="city"
+          ownerId={userID}
+          startDate={startDate}
+          endDate={endDate}
+          challengeId={challengesNames[selectedChallengeId || '']?.id || ''}
+          branchId={branch || ''}
+          filterBy={filterBy}
+          limitSettings={limitSettings}
+          challengesNames={challengesNames}
+          selectedChallengeId={selectedChallengeId}
+        />
+
         {(limitSettings?.c8_organization_leaderboard.granted) &&
           <Row>
             <Col className="card">
-              <DataTableWithExportToCSV
-                rowsData={organizationsListRowsData}
-                columns={organizationsColumns}
-                dataForCSV={organisationsForExcel}
-                title={t("global.list_of_organisations")}
-                filename="organizations"
-                onClickRow={onClickOrganisationRow}
-                emptyRowsDescription={t("dashboard_default.no_organization_in_city")}
-                columnsDescriptionDataForCSV={organizationsColumnsDescriptionData}
-                sheet1Title={t("global.list_of_organisations")}
-                sheet2Title={t("global.description_of_data")}
-                downloadExcelButtonRef={downloadOrganisationsExcelButtonRef}
-                onDownloadClick={onClickDownloadExcelOrganisations}
-                extraButton={<Link style={{ fontSize: '1rem' }} to={routes.city.allOrganisations}>{t("dashboard_default.see_all_orgs")}</Link>}
-                loading={organisationsLoading}
-              />
+              <Suspense fallback={<div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading Organizations Table...</div>}>
+                <DataTableWithExportToCSV
+                  rowsData={organizationsListRowsData}
+                  columns={organizationsColumns}
+                  dataForCSV={organisationsForExcel}
+                  title={t("global.list_of_organisations")}
+                  filename="organizations"
+                  onClickRow={onClickOrganisationRow}
+                  emptyRowsDescription={t("dashboard_default.no_organization_in_city")}
+                  columnsDescriptionDataForCSV={organizationsColumnsDescriptionData}
+                  sheet1Title={t("global.list_of_organisations")}
+                  sheet2Title={t("global.description_of_data")}
+                  downloadExcelButtonRef={downloadOrganisationsExcelButtonRef}
+                  onDownloadClick={onClickDownloadExcelOrganisations}
+                  extraButton={<Link style={{ fontSize: '1rem' }} to={routes.city.allOrganisations}>{t("dashboard_default.see_all_orgs")}</Link>}
+                  loading={organisationsLoading}
+                />
+              </Suspense>
             </Col>
           </Row>
         }
+
         {limitSettings?.c19_carpooling_app?.granted && (
           <>
             <Row>
               <Col className="card">
-                <DataTableWithExportToCSV
-                  rowsData={filteredSessionPerDay}
-                  columns={carpoolSessionsListColumns}
-                  dataForCSV={formatCarpoolSessionsListDataForCSV}
-                  title={t("global.list_of_sessions")}
-                  filename="sessions"
-                  emptyRowsDescription={t("dashboard_default.no_matches_city")}
-                  sheet1Title={t("global.list_of_sessions").slice(0, 30)}
-                  searchField="driverName"
-                  additionalFilterComponent={filterComponentPerDay}
-                  pageSize={20}
-                  extraButton={<Link style={{ fontSize: '1rem' }} to={routes.city.allUsersSessions}>{t("dashboard_default.see_all_users_sessions")}</Link>}
-                  loading={loadingCarpoolSession}
-                  onChangeCell={onChangeCarpoolSessionItem}
-                />
+                <Suspense fallback={<div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading Sessions Table...</div>}>
+                  <DataTableWithExportToCSV
+                    rowsData={filteredSessionPerDay}
+                    columns={carpoolSessionsListColumns}
+                    dataForCSV={formatCarpoolSessionsListDataForCSV}
+                    title={t("global.list_of_sessions")}
+                    filename="sessions"
+                    emptyRowsDescription={t("dashboard_default.no_matches_city")}
+                    sheet1Title={t("global.list_of_sessions").slice(0, 30)}
+                    searchField="driverName"
+                    additionalFilterComponent={filterComponentPerDay}
+                    pageSize={20}
+                    extraButton={<Link style={{ fontSize: '1rem' }} to={routes.city.allUsersSessions}>{t("dashboard_default.see_all_users_sessions")}</Link>}
+                    loading={loadingCarpoolSession}
+                    onChangeCell={onChangeCarpoolSessionItem}
+                  />
+                </Suspense>
               </Col>
             </Row>
             {limitSettings?.c19_carpooling_app?.can_see_matches && (
               <Row>
                 <Col className="card">
-                  <DataTableWithExportToCSV
-                    rowsData={filteredMatchesRows}
-                    columns={carpoolMatchesListColumns}
-                    dataForCSV={formatCarpoolMatchesListDataForCSV}
-                    title={t("global.list_of_matches")}
-                    filename="matches"
-                    emptyRowsDescription={t("dashboard_default.no_matches_city")}
-                    sheet1Title={t("global.list_of_matches")}
-                    onClickRow={onClickUserRow}
-                    searchField="driverName"
-                    additionalFilterComponent={filterComponent}
-                    sortBy='etaTimestamp'
-                    loading={loadingCarpool}
-                  />
+                  <Suspense fallback={<div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading Matches Table...</div>}>
+                    <DataTableWithExportToCSV
+                      rowsData={filteredMatchesRows}
+                      columns={carpoolMatchesListColumns}
+                      dataForCSV={formatCarpoolMatchesListDataForCSV}
+                      title={t("global.list_of_matches")}
+                      filename="matches"
+                      emptyRowsDescription={t("dashboard_default.no_matches_city")}
+                      sheet1Title={t("global.list_of_matches")}
+                      onClickRow={onClickUserRow}
+                      searchField="driverName"
+                      additionalFilterComponent={filterComponent}
+                      sortBy='etaTimestamp'
+                      loading={loadingCarpool}
+                    />
+                  </Suspense>
                 </Col>
               </Row>)}
           </>
         )}
-        <>
+
+        {/* Conditional rendering for Users Table - lazy loading */}
+        {shouldRenderUsersTable ? (
+          <Suspense fallback={
+            <Row>
+              <Col className="card">
+                <div style={{ height: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #dee2e6', borderRadius: '0.375rem' }}>
+                  Loading Users Table...
+                </div>
+              </Col>
+            </Row>
+          }>
+            <UsersTableSection
+              ownerType="city"
+              ownerId={userID}
+              startDate={startDate}
+              endDate={endDate}
+              challengeId={challengesNames[selectedChallengeId || '']?.id || ''}
+              branchId={branch || ''}
+              filterBy={filterBy}
+              t={t}
+              onClickUserRow={onClickUserRow}
+              routes={routes}
+              downloadUsersExcelButtonRef={downloadUsersExcelButtonRef}
+              onClickDownloadExcelUsers={onClickDownloadExcelUsers}
+            />
+          </Suspense>
+        ) : (
           <Row>
             <Col className="card">
-              <DataTableWithExportToCSV
-                rowsData={usersListRowsData}
-                columns={usersListColumns}
-                dataForCSV={userDataForCsv}
-                title={t("global.listOfUsers")}
-                filename="users"
-                emptyRowsDescription={t("dashboard_default.no_user")}
-                onClickRow={onClickUserRow}
-                columnsDescriptionDataForCSV={usersListTableDescriptionDataForCSV}
-                sheet1Title={t("global.listOfUsers")}
-                sheet2Title={t("global.description_of_data")}
-                customColumnsSheet1={usersTableCustomColumns}
-                downloadExcelButtonRef={downloadUsersExcelButtonRef}
-                onDownloadClick={onClickDownloadExcelUsers}
-                extraButton={<Link style={{ fontSize: '1rem' }} to={routes.city.allUsers}>{t("dashboard_default.see_all_users")}</Link>}
-                loading={loadingUsers || usersLoading}
-              />
+              <div
+                ref={usersTablePlaceholderRef}
+                style={{
+                  height: '400px',
+                  background: '#f8f9fa',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  border: '1px solid #dee2e6',
+                  borderRadius: '0.375rem'
+                }}>
+                <div style={{ textAlign: 'center', color: '#6c757d' }}>
+                  <div style={{ fontSize: '1.1rem', marginBottom: '8px' }}>📊 Users Table (PLACEHOLDER)</div>
+                  <div style={{ fontSize: '0.8rem', marginTop: '10px', color: '#007bff' }}>
+                    Status: {hasTriggeredUsersTable ? 'TRIGGERED' : 'WAITING FOR SCROLL'}
+                  </div>
+                  <button
+                    onClick={() => {
+                      setHasTriggeredUsersTable(true);
+                      setShouldRenderUsersTable(true);
+                    }}
+                    style={{ marginTop: '10px', padding: '8px 16px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                  >
+                    Manual Load (Debug)
+                  </button>
+                </div>
+              </div>
             </Col>
           </Row>
-        </>
-        {limitSettings?.c20_marketplace?.granted &&
-          <Row>
-            <Col className="card">
-              <DataTableWithExportToCSV
-                rowsData={tenantsListRowsData}
-                columns={tenantListColumns}
-                dataForCSV={formatTenantsListDataForCSV}
-                onClickRow={onClickTenantRow}
-                title={t("global.list_of_tenants")}
-                filename="tenants"
-                emptyRowsDescription={t("dashboard_default.no_tenant_with_transactions_in_city")}
-                columnsDescriptionDataForCSV={tenantsListColumnsDescriptionData}
-                sheet1Title={t("global.list_of_tenants")}
-                sheet2Title={t("global.description_of_data")}
-              />
-            </Col>
-          </Row>}
+        )}
+
+        {limitSettings?.c20_marketplace?.granted && (
+          /* Conditional rendering for Tenants Table - lazy loading */
+          shouldRenderTenantsTable ? (
+            <Row>
+              <Col className="card">
+                <DataTableWithExportToCSV
+                  rowsData={tenantsListRowsData}
+                  columns={tenantListColumns}
+                  dataForCSV={formatTenantsListDataForCSV}
+                  onClickRow={onClickTenantRow}
+                  title={t("global.list_of_tenants")}
+                  filename="tenants"
+                  emptyRowsDescription={t("dashboard_default.no_tenant_with_transactions_in_city")}
+                  columnsDescriptionDataForCSV={tenantsListColumnsDescriptionData}
+                  sheet1Title={t("global.list_of_tenants")}
+                  sheet2Title={t("global.description_of_data")}
+                  loading={orgTenantLoading}
+                />
+              </Col>
+            </Row>
+          ) : (
+            <Row>
+              <Col className="card">
+                <div
+                  ref={tenantsTablePlaceholderRef}
+                  style={{
+                    height: '400px',
+                    background: '#f8f9fa',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1px solid #dee2e6',
+                    borderRadius: '0.375rem'
+                  }}>
+                  <div style={{ textAlign: 'center', color: '#6c757d' }}>
+                    <div style={{ fontSize: '1.1rem', marginBottom: '8px' }}>🏪 Tenants Table (PLACEHOLDER)</div>
+                    <div style={{ fontSize: '0.9rem' }}>Scroll down to load tenants data</div>
+                    <div style={{ fontSize: '0.8rem', marginTop: '10px', color: '#007bff' }}>
+                      Status: {hasTriggeredTenantsTable ? 'TRIGGERED' : 'WAITING FOR SCROLL'}
+                    </div>
+                    <button
+                      onClick={() => {
+                        setHasTriggeredTenantsTable(true);
+                        setShouldRenderTenantsTable(true);
+                        if (fetchTenantData) {
+                          fetchTenantData();
+                        }
+                      }}
+                      style={{ marginTop: '10px', padding: '8px 16px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                    >
+                      Manual Load (Debug)
+                    </button>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+          )
+        )}
 
       </>
       {/* // ) : (
