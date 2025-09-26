@@ -112,7 +112,9 @@ export default function Dashboard() {
     fetchOrganisations,
     totalRecords: organizationsTotalRecords,
     currentPage: organizationsCurrentPage,
-    handlePageChange: handleOrganizationsPageChange
+    handlePageChange: handleOrganizationsPageChange,
+    currentSort: organizationsCurrentSort,
+    handleSortChange: handleOrganizationsSortChange
   } = cityHooks.useFetchDashboardOrganisations({
     ownerType: 'city',
     ownerId: userID,
@@ -892,6 +894,8 @@ export default function Dashboard() {
                     onPageChange={handleOrganizationsPageChange}
                     pageSize={10}
                     useModernPagination={true}
+                    currentSort={organizationsCurrentSort}
+                    onSortChange={handleOrganizationsSortChange}
                   />
                 </Suspense>
               </Col>

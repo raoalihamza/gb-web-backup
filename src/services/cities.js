@@ -235,10 +235,10 @@ export const getCitySessionsData = async ({
   return result;
 };
 
-export const fetchDashboardOrganisations = async ({ ownerType, ownerId, challengeId, startDate, endDate, branchId, page = 1, limit = 10 }) => {
+export const fetchDashboardOrganisations = async ({ ownerType, ownerId, challengeId, startDate, endDate, branchId, page = 1, limit = 10, sortBy = '', sortOrder = 'asc' }) => {
   const res = await axios
     .get(
-      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/get-total-organisations?ownerType=${ownerType}&ownerId=${ownerId}&branchId=${branchId}&startDate=${startDate}&endDate=${endDate}&challenge=${challengeId}&page=${page}&limit=${limit}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/get-total-organisations?ownerType=${ownerType}&ownerId=${ownerId}&branchId=${branchId}&startDate=${startDate}&endDate=${endDate}&challenge=${challengeId}&page=${page}&limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}`
     )
     .then((res) => res.data)
     .catch((err) => { console.log(`error get-total-organisations : ${err}`) });

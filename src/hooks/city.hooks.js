@@ -415,6 +415,7 @@ const useFetchDashboardOrganisations = ({ ownerType, ownerId, challenge, startDa
   const [organisations, setOrganisations] = useState();
   const [totalRecords, setTotalRecords] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+  const [currentSort, setCurrentSort] = useState({ column: '', direction: 'asc' });
 
   const getOrganisations = useCallback(async () => {
     if (!ownerId) return;
@@ -435,7 +436,12 @@ const useFetchDashboardOrganisations = ({ ownerType, ownerId, challenge, startDa
         startDate: startDateUpdated,
         endDate: endDateUpdated,
         branchId,
-        ...(serverSide && { page: currentPage + 1, limit: pageSize })
+        ...(serverSide && {
+          page: currentPage + 1,
+          limit: pageSize,
+          sortBy: currentSort.column,
+          sortOrder: currentSort.direction
+        })
       });
 
       if (res) {
@@ -454,7 +460,7 @@ const useFetchDashboardOrganisations = ({ ownerType, ownerId, challenge, startDa
       console.error("error", error);
       setIsLoading(false);
     }
-  }, [ownerId, filterBy.logType, endDate, startDate, ownerType, challenge, branchId, skipOrganisationsData, serverSide, currentPage, pageSize]);
+  }, [ownerId, filterBy.logType, endDate, startDate, ownerType, challenge, branchId, skipOrganisationsData, serverSide, currentPage, pageSize, currentSort.column, currentSort.direction]);
 
   useEffect(() => {
     getOrganisations();
@@ -487,6 +493,30 @@ const useFetchDashboardOrganisations = ({ ownerType, ownerId, challenge, startDa
     setCurrentPage(newPageIndex);
   }, []);
 
+  // Sort change handler for server-side sorting
+  const handleSortChange = useCallback((sortBy) => {
+    const columnId = sortBy[0]?.id;
+
+    // Only allow sorting on specific columns: ghg, trips, users
+    const allowedSortColumns = ['ghg', 'trips', 'users'];
+    if (!allowedSortColumns.includes(columnId)) {
+      return; // Do nothing if column is not in allowed list
+    }
+
+    setCurrentSort(prevSort => {
+      // If clicking the same column, toggle direction
+      if (prevSort.column === columnId) {
+        const newDirection = prevSort.direction === 'asc' ? 'desc' : 'asc';
+        return { column: columnId, direction: newDirection };
+      } else {
+        // If clicking a different column, start with asc
+        return { column: columnId || '', direction: 'asc' };
+      }
+    });
+    // Reset to first page when sorting changes
+    setCurrentPage(0);
+  }, []);
+
   return {
     organisations,
     isLoading,
@@ -494,9 +524,13 @@ const useFetchDashboardOrganisations = ({ ownerType, ownerId, challenge, startDa
     setIsLoading,
     getOrganisationsForExcel,
     fetchOrganisations: getOrganisations,
+    // Server-side pagination props
     totalRecords,
     currentPage,
     handlePageChange,
+    // Server-side sorting props
+    currentSort,
+    handleSortChange,
     serverSide
   };
 };

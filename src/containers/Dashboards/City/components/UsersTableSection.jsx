@@ -34,6 +34,7 @@ export default function UsersTableSection({
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(0);
     const [totalRecords, setTotalRecords] = useState(0);
+    const [currentSort, setCurrentSort] = useState({ column: '', direction: 'asc' });
 
     // Create required column and table configurations
     const dashboardViewModel = useMemo(() => new DashboardViewModel(), []);
@@ -68,7 +69,12 @@ export default function UsersTableSection({
                 endDate: endDateUpdated,
                 challengeId: challengeId || '',
                 branchId: branchId || '',
-                ...(serverSide && { page: currentPage + 1, limit: pageSize })
+                ...(serverSide && {
+                    page: currentPage + 1,
+                    limit: pageSize,
+                    sortBy: currentSort.column,
+                    sortOrder: currentSort.direction
+                })
             };
 
             const totalUsers = await fetchDashboardTotalUsers(apiParams);
@@ -121,7 +127,7 @@ export default function UsersTableSection({
         } finally {
             setLoading(false);
         }
-    }, [ownerType, ownerId, startDate, endDate, challengeId, branchId, filterBy, t, serverSide, currentPage, pageSize]);
+    }, [ownerType, ownerId, startDate, endDate, challengeId, branchId, filterBy, t, serverSide, currentPage, pageSize, currentSort.column, currentSort.direction]);
 
     // Load data on mount
     useEffect(() => {
@@ -133,12 +139,36 @@ export default function UsersTableSection({
         setCurrentPage(newPageIndex);
     }, []);
 
+    // Sort change handler for server-side sorting
+    const handleSortChange = useCallback((sortBy) => {
+        const columnId = sortBy[0]?.id;
+
+        // Only allow sorting on specific columns: ghg (GHG) and dist (distance)
+        const allowedSortColumns = ['ghg', 'dist'];
+        if (!allowedSortColumns.includes(columnId)) {
+            return; // Do nothing if column is not in allowed list
+        }
+
+        setCurrentSort(prevSort => {
+            // If clicking the same column, toggle direction
+            if (prevSort.column === columnId) {
+                const newDirection = prevSort.direction === 'asc' ? 'desc' : 'asc';
+                return { column: columnId, direction: newDirection };
+            } else {
+                // If clicking a different column, start with asc
+                return { column: columnId || '', direction: 'asc' };
+            }
+        });
+        // Reset to first page when sorting changes
+        setCurrentPage(0);
+    }, []);
+
     const hasData = data.totalUsers !== null;
 
     return (
         <Row>
             <Col className="card">
-                <div style={{ minHeight: '450px', position: 'relative' }}>
+                <div style={{ minHeight: 'auto', position: 'relative' }}>
                     {loading && !hasData ? (
                         <div style={{
                             position: 'absolute',
@@ -184,6 +214,8 @@ export default function UsersTableSection({
                             onPageChange={handlePageChange}
                             pageSize={pageSize}
                             useModernPagination={true}
+                            currentSort={currentSort}
+                            onSortChange={handleSortChange}
                         />
                     )}
                 </div>

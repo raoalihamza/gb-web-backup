@@ -449,42 +449,52 @@ export default class DashboardViewModel extends Firebase {
       {
         Header: "#",
         accessor: "key", // accessor is the "key" in the data
+        disableSort: true,
       },
       {
         Header: t("global.organization_name"),
         accessor: "name",
+        disableSort: true,
       },
       {
         Header: t("account.profile.invite_code"),
         accessor: "inviteCode",
+        disableSort: true,
       },
       {
         Header: t("account.profile.email"),
         accessor: "email",
+        disableSort: true,
       },
       {
         Header: t("account.profile.emailContact"),
         accessor: "emailContact",
+        disableSort: true,
       },
       {
         Header: `${t("dashboard_fitness.GES")} ${t("dashboard_fitness.ges2")}`,
         accessor: "ghg",
+        // Sorting enabled for GHG
       },
       {
         Header: `${t("dashboard_fitness.trips")}`,
         accessor: "trips",
+        // Sorting enabled for trips
       },
       {
         Header: `${t("dashboard_fitness.users")}`,
         accessor: "users",
+        // Sorting enabled for users
       },
       {
         Header: t("challenge.active_challenges"),
         accessor: "comingChallenge",
+        disableSort: true,
       },
       {
         Header: t("global.last_login"),
         accessor: "lastLogin",
+        disableSort: true,
       },
     ];
   }
@@ -691,38 +701,47 @@ export default class DashboardViewModel extends Firebase {
       {
         Header: "#",
         accessor: "key", // accessor is the "key" in the data
+        disableSort: true,
       },
       {
         Header: t("global.Username"),
         accessor: "name",
+        disableSort: true,
       },
       {
         Header: t("account.profile.email"),
         accessor: "email",
+        disableSort: true,
       },
       {
         Header: `${t("dashboard_fitness.GES")} ${t("dashboard_fitness.ges2")}`,
         accessor: "ghg",
+        // Sorting enabled for GHG
       },
       {
         Header: t("global.active_days"),
         accessor: "activeDays",
+        disableSort: true,
       },
       {
         Header: t("global.organisation_name"),
         accessor: "organisationName",
+        disableSort: true,
       },
       {
         Header: t("dashboard_fitness.branch_name"),
         accessor: "branchName",
+        disableSort: true,
       },
       {
         Header: t("global.last_login"),
         accessor: "lastConnection",
+        disableSort: true,
       },
       {
         Header: t("dashboard_fitness.distance"),
         accessor: "dist",
+        // Sorting enabled for distance
       },
 
     ];

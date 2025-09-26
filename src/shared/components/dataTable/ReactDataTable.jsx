@@ -4,6 +4,7 @@ import DataTableBody from "./DataTableBody";
 import DataTableHeader from "./DataTableHeader";
 import DataTablePagination from "./DataTablePagination";
 import ModernPaginationSimple from "./ModernPaginationSimple";
+import ImprovedTableStyles from "./ImprovedTableStyles";
 import { useEffect, useState } from "react";
 
 const ReactDataTable = ({
@@ -23,6 +24,9 @@ const ReactDataTable = ({
   currentPage = 0,
   onPageChange,
   useModernPagination = true,
+  // NEW: Server-side sorting props
+  currentSort = { column: '', direction: 'asc' },
+  onSortChange,
 }) => {
   const [localSortBy, setLocalSortBy] = useState();
   const {
@@ -60,7 +64,13 @@ const ReactDataTable = ({
         manualPagination: true,
         pageCount: Math.ceil(totalRecords / pageSize),
       }),
+      // Server-side sorting configuration
+      ...(serverSide && {
+        manualSortBy: true,
+        disableSortRemove: true,
+      }),
       autoResetPage: false,
+      autoResetSortBy: false,
     },
     useSortBy,
     usePagination
@@ -76,11 +86,19 @@ const ReactDataTable = ({
     onChangePageIndex(pageIndex);
   }, [onChangePageIndex, pageIndex]);
 
+  // Handle server-side sorting changes
+  useEffect(() => {
+    if (serverSide && onSortChange && tableSortBy && tableSortBy.length > 0) {
+      onSortChange(tableSortBy);
+    }
+  }, [serverSide, onSortChange, tableSortBy]);
+
   return (
     <>
+      <ImprovedTableStyles />
       <div className="users-table-card-body" style={styles}>
         <table {...getTableProps()} className="data-table">
-          <DataTableHeader headerGroups={headerGroups} sortable />
+          <DataTableHeader headerGroups={headerGroups} sortable={true} />
           <DataTableBody
             getTableBodyProps={getTableBodyProps}
             prepareRow={prepareRow}

@@ -236,16 +236,16 @@ export const fetchDashboardTotalPeriods = async (params) => {
 };
 
 export const fetchDashboardTotalUsers = async (params) => {
-  const { page = 1, limit = 10 } = params;
+  const { page = 1, limit = 10, sortBy = '', sortOrder = 'asc' } = params;
 
-  // Include pagination params in cache key for server-side pagination
-  const cacheKey = getCacheKey('fetchDashboardTotalUsers', { ...params, page, limit });
+  // Include pagination and sorting params in cache key for server-side pagination/sorting
+  const cacheKey = getCacheKey('fetchDashboardTotalUsers', { ...params, page, limit, sortBy, sortOrder });
   const cached = getFromCache(cacheKey);
   if (cached) return cached;
 
   const res = await axios
     .get(
-      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/get-total-users?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}&page=${page}&limit=${limit}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/get-total-users?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}&page=${page}&limit=${limit}&sortBy=${sortBy}&sortOrder=${sortOrder}`
     )
     .then((res) => res.data)
     .catch((err) => { console.log(`error get-total-users : ${err}`) });

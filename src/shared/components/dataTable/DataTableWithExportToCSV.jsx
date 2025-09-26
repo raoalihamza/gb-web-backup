@@ -33,6 +33,9 @@ const DataTableWithExportToCSV = ({
   currentPage = 0,
   onPageChange,
   useModernPagination = true,
+  // NEW: Server-side sorting props
+  currentSort = { column: '', direction: 'asc' },
+  onSortChange,
 }) => {
   const { t } = useTranslation("common");
   const buttonRef = useRef();
@@ -69,25 +72,20 @@ const DataTableWithExportToCSV = ({
       <div className="d-flex justify-content-between align-items-center">
         <p className="bold-text">{title}</p>
 
-        <CircularProgress
-          style={{
-            color: "#4ce1b6",
-            ...(!loading
-              ? { position: "absolute", width: 0, height: 0, opacity: 0 }
-              : {}),
-          }}
-          size={50}
-        />
+        {/* Loader positioned over Export button only */}
 
         <div
           className="d-flex align-items-center mb-4"
-          style={{
-            gap: "16px",
-            ...(loading
-              ? { position: "absolute", width: 0, height: 0, opacity: 0 }
-              : {}),
-          }}
+          style={{ gap: "16px" }}
         >
+          {loading && (
+            <CircularProgress
+              style={{
+                color: "#4ce1b6",
+              }}
+              size={20}
+            />
+          )}
           {extraButton && extraButton}
           <button type="button" className="export-to-csv">
             <div className="export-to-csv-link" onClick={handleDownloadClick}>
@@ -140,6 +138,8 @@ const DataTableWithExportToCSV = ({
             currentPage={currentPage}
             onPageChange={onPageChange}
             useModernPagination={useModernPagination}
+            currentSort={currentSort}
+            onSortChange={onSortChange}
           />
         ) : (
           <span>{emptyRowsDescription}</span>

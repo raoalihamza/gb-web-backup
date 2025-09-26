@@ -13,7 +13,12 @@ export default function DataTableBody({
         return (
           <tr {...row.getRowProps()} onClick={() => onClickRow(row.original)}>
             {row.cells.map((cell) => (
-              <td {...cell.getCellProps()} className="data-table-data">
+              <td
+                {...cell.getCellProps()}
+                className="data-table-data"
+                data-cell={cell.column.id}
+                title={cell.value} // Tooltip for truncated content
+              >
                 {cell.render("Cell")}
               </td>
             ))}
