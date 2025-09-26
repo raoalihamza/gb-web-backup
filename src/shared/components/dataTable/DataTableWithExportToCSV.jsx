@@ -28,6 +28,11 @@ const DataTableWithExportToCSV = ({
   additionalFilterComponent = <></>,
   sortBy,
   onChangeCell,
+  serverSide = false,
+  totalRecords = 0,
+  currentPage = 0,
+  onPageChange,
+  useModernPagination = true,
 }) => {
   const { t } = useTranslation("common");
   const buttonRef = useRef();
@@ -125,11 +130,16 @@ const DataTableWithExportToCSV = ({
         {rowsData.length > 0 ? (
           <ReactDataTable
             columns={columns}
-            rows={filteredRowsData}
+            rows={serverSide ? rowsData : filteredRowsData}
             onClickRow={onClickRow}
             pageSize={pageSize}
             sortBy={sortBy}
             onChangeCell={onChangeCell}
+            serverSide={serverSide}
+            totalRecords={totalRecords}
+            currentPage={currentPage}
+            onPageChange={onPageChange}
+            useModernPagination={useModernPagination}
           />
         ) : (
           <span>{emptyRowsDescription}</span>

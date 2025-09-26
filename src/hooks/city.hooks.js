@@ -410,12 +410,15 @@ const useCityMailerLiteConnectedUsers = (cityId, lastSyncedTimestamp) => {
   return { cityMailerLiteConnectedUsers, isLoading, syncCityMailerLiteConnectedUsers, lastSyncedDate };
 };
 
-const useFetchDashboardOrganisations = ({ ownerType, ownerId, challenge, startDate, endDate, filterBy, branchId }) => {
+const useFetchDashboardOrganisations = ({ ownerType, ownerId, challenge, startDate, endDate, filterBy, branchId, skipOrganisationsData = false, serverSide = false, pageSize = 10 }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [organisations, setOrganisations] = useState();
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
 
   const getOrganisations = useCallback(async () => {
     if (!ownerId) return;
+    if (skipOrganisationsData) return;
     if ((filterBy.logType === DASHBOARD_AVAILABLE_FILTER_TYPES.range.logType && !endDate) || (filterBy.logType === DASHBOARD_AVAILABLE_FILTER_TYPES.challenges.logType && !challenge)) {
       return;
     }
@@ -425,16 +428,33 @@ const useFetchDashboardOrganisations = ({ ownerType, ownerId, challenge, startDa
       const startDateUpdated = filterBy.logType === DASHBOARD_AVAILABLE_FILTER_TYPES.challenges.logType ? dateUtils.getFormattedStringWeekDayDate(challenge.startAt) : dateUtils.getFormattedStringWeekDayDate(dateUtils.getNearestStartDateByFilter(filterBy.logType, startDate));
       const endDateUpdated = filterBy.logType === DASHBOARD_AVAILABLE_FILTER_TYPES.challenges.logType ? dateUtils.getFormattedStringWeekDayDate(challenge.endAt) : getEndDateForDashboard({ startDate: startDateUpdated, endDate, period: filterBy.logType });
 
-      const res = await fetchDashboardOrganisations({ ownerType, ownerId, challengeId: challenge?.id || '', startDate: startDateUpdated, endDate: endDateUpdated, branchId });
+      const res = await fetchDashboardOrganisations({
+        ownerType,
+        ownerId,
+        challengeId: challenge?.id || '',
+        startDate: startDateUpdated,
+        endDate: endDateUpdated,
+        branchId,
+        ...(serverSide && { page: currentPage + 1, limit: pageSize })
+      });
+
       if (res) {
-        setOrganisations(res);
+        if (serverSide && res.data && res.total !== undefined) {
+          // Server-side pagination response: { data: [], total: number }
+          setOrganisations(res.data);
+          setTotalRecords(res.total);
+        } else {
+          // Legacy response: array of organizations
+          setOrganisations(Array.isArray(res) ? res : []);
+          setTotalRecords(Array.isArray(res) ? res.length : 0);
+        }
       }
       setIsLoading(false);
     } catch (error) {
       console.error("error", error);
       setIsLoading(false);
     }
-  }, [ownerId, filterBy.logType, endDate, startDate, ownerType, challenge, branchId]);
+  }, [ownerId, filterBy.logType, endDate, startDate, ownerType, challenge, branchId, skipOrganisationsData, serverSide, currentPage, pageSize]);
 
   useEffect(() => {
     getOrganisations();
@@ -462,7 +482,23 @@ const useFetchDashboardOrganisations = ({ ownerType, ownerId, challenge, startDa
     }
   }, [ownerId, filterBy.logType, endDate, challenge, startDate, ownerType, branchId]);
 
-  return { organisations, isLoading, setOrganisations, setIsLoading, getOrganisationsForExcel };
+  // Page change handler for server-side pagination
+  const handlePageChange = useCallback((newPageIndex) => {
+    setCurrentPage(newPageIndex);
+  }, []);
+
+  return {
+    organisations,
+    isLoading,
+    setOrganisations,
+    setIsLoading,
+    getOrganisationsForExcel,
+    fetchOrganisations: getOrganisations,
+    totalRecords,
+    currentPage,
+    handlePageChange,
+    serverSide
+  };
 };
 
 

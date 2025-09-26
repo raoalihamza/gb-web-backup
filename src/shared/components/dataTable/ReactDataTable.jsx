@@ -3,6 +3,7 @@ import { useTable, useSortBy, usePagination } from "react-table";
 import DataTableBody from "./DataTableBody";
 import DataTableHeader from "./DataTableHeader";
 import DataTablePagination from "./DataTablePagination";
+import ModernPaginationSimple from "./ModernPaginationSimple";
 import { useEffect, useState } from "react";
 
 const ReactDataTable = ({
@@ -17,6 +18,11 @@ const ReactDataTable = ({
   styles = {},
   onChangePageIndex = (idx) => {},
   disableGoToLastPage = false,
+  serverSide = false,
+  totalRecords = 0,
+  currentPage = 0,
+  onPageChange,
+  useModernPagination = true,
 }) => {
   const [localSortBy, setLocalSortBy] = useState();
   const {
@@ -46,10 +52,14 @@ const ReactDataTable = ({
                 desc: desc,
               },
             ],
-
+        pageIndex: serverSide ? currentPage : 0,
         pageSize,
       },
-      onChangeCell,
+      // Server-side pagination configuration
+      ...(serverSide && {
+        manualPagination: true,
+        pageCount: Math.ceil(totalRecords / pageSize),
+      }),
       autoResetPage: false,
     },
     useSortBy,
@@ -81,18 +91,36 @@ const ReactDataTable = ({
         </table>
       </div>
 
-      {rows.length > pageSize && (
-        <DataTablePagination
-          gotoPage={gotoPage}
-          nextPage={nextPage}
-          previousPage={previousPage}
-          pageIndex={pageIndex}
-          pageOptions={pageOptions}
-          pageCount={pageCount}
-          canNextPage={canNextPage}
-          canPreviousPage={canPreviousPage}
-          disableGoToLastPage={disableGoToLastPage}
-        />
+      {(serverSide ? totalRecords > pageSize : rows.length > pageSize) && (
+        useModernPagination ? (
+          <ModernPaginationSimple
+            gotoPage={gotoPage}
+            nextPage={nextPage}
+            previousPage={previousPage}
+            pageIndex={serverSide ? currentPage : pageIndex}
+            pageOptions={pageOptions}
+            pageCount={pageCount}
+            canNextPage={canNextPage}
+            canPreviousPage={canPreviousPage}
+            disableGoToLastPage={disableGoToLastPage}
+            totalRecords={serverSide ? totalRecords : rows.length}
+            pageSize={pageSize}
+            serverSide={serverSide}
+            onPageChange={onPageChange}
+          />
+        ) : (
+          <DataTablePagination
+            gotoPage={gotoPage}
+            nextPage={nextPage}
+            previousPage={previousPage}
+            pageIndex={pageIndex}
+            pageOptions={pageOptions}
+            pageCount={pageCount}
+            canNextPage={canNextPage}
+            canPreviousPage={canPreviousPage}
+            disableGoToLastPage={disableGoToLastPage}
+          />
+        )
       )}
     </>
   );

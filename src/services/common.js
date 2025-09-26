@@ -236,13 +236,16 @@ export const fetchDashboardTotalPeriods = async (params) => {
 };
 
 export const fetchDashboardTotalUsers = async (params) => {
-  const cacheKey = getCacheKey('fetchDashboardTotalUsers', params);
+  const { page = 1, limit = 10 } = params;
+
+  // Include pagination params in cache key for server-side pagination
+  const cacheKey = getCacheKey('fetchDashboardTotalUsers', { ...params, page, limit });
   const cached = getFromCache(cacheKey);
   if (cached) return cached;
 
   const res = await axios
     .get(
-      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/get-total-users?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}`
+      `${VITE_CLOUD_FUNCTION_API_URL}/statsApi/get-total-users?ownerType=${params.ownerType}&ownerId=${params.ownerId}&branchId=${params.branchId}&startDate=${params.startDate}&endDate=${params.endDate}&challenge=${params.challengeId || ''}&page=${page}&limit=${limit}`
     )
     .then((res) => res.data)
     .catch((err) => { console.log(`error get-total-users : ${err}`) });

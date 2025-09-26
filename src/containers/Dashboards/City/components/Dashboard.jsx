@@ -94,11 +94,26 @@ export default function Dashboard() {
   const [shouldRenderTenantsTable, setShouldRenderTenantsTable] = useState(false);
   const [hasTriggeredTenantsTable, setHasTriggeredTenantsTable] = useState(false);
   const tenantsTablePlaceholderRef = useRef(null);
+
+  // Lazy loading state for OrganizationsTableSection
+  const [shouldRenderOrganizationsTable, setShouldRenderOrganizationsTable] = useState(false);
+  const [hasTriggeredOrganizationsTable, setHasTriggeredOrganizationsTable] = useState(false);
+  const organizationsTablePlaceholderRef = useRef(null);
   const matches = limitSettings?.c19_carpooling_app?.can_see_matches
     ? carpoolMatchesListRowsData
     : [];
 
-  const { organisations, isLoading: organisationsLoading, setIsLoading: setLoadingOrganisations, getOrganisationsForExcel, setOrganisations } = cityHooks.useFetchDashboardOrganisations({
+  const {
+    organisations,
+    isLoading: organisationsLoading,
+    setIsLoading: setLoadingOrganisations,
+    getOrganisationsForExcel,
+    setOrganisations,
+    fetchOrganisations,
+    totalRecords: organizationsTotalRecords,
+    currentPage: organizationsCurrentPage,
+    handlePageChange: handleOrganizationsPageChange
+  } = cityHooks.useFetchDashboardOrganisations({
     ownerType: 'city',
     ownerId: userID,
     startDate: startDate,
@@ -106,6 +121,9 @@ export default function Dashboard() {
     challenge: challengesNames[selectedChallengeId || ''],
     filterBy,
     branchId: branch,
+    skipOrganisationsData: !shouldRenderOrganizationsTable,  // Skip organizations data until needed
+    serverSide: true,  // Enable server-side pagination
+    pageSize: 10       // Set page size
   });
   const { filterComponent, filteredMatchesRows } = commonHooks.useFilterMatchesByStatus(matches);
 
@@ -351,6 +369,52 @@ export default function Dashboard() {
       window.removeEventListener('resize', handleScroll);
     };
   }, [hasTriggeredTenantsTable]);
+
+  // Lazy loading for OrganizationsTableSection (exact same pattern as UsersTableSection and TenantsTableSection)
+  useEffect(() => {
+    if (hasTriggeredOrganizationsTable) return;
+
+    const checkIfOrganizationsTableInView = () => {
+      const element = organizationsTablePlaceholderRef.current;
+      if (!element) {
+        return;
+      }
+
+      const rect = element.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      // Conservative detection - element must be significantly in viewport
+      // Only trigger when user has scrolled so element is at least 300px from bottom
+      const isInView = (
+        rect.top < windowHeight - 300 &&
+        rect.bottom > 100
+      );
+
+      if (isInView && !hasTriggeredOrganizationsTable) {
+        setHasTriggeredOrganizationsTable(true);
+        setShouldRenderOrganizationsTable(true);
+        // Trigger organizations data fetch when lazy loading is activated
+        if (fetchOrganisations) {
+          fetchOrganisations();
+        }
+      }
+    };
+
+    const handleScroll = () => {
+      checkIfOrganizationsTableInView();
+    };
+
+    // NO immediate checks - only scroll-based detection
+    // This ensures lazy loading only happens when user actually scrolls
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [hasTriggeredOrganizationsTable, fetchOrganisations]);
 
   // useEffect(() => {
   //   if (!mapped?.logType || filterBy?.logType === 'challenges') return;
@@ -801,30 +865,75 @@ export default function Dashboard() {
           selectedChallengeId={selectedChallengeId}
         />
 
-        {(limitSettings?.c8_organization_leaderboard.granted) &&
-          <Row>
-            <Col className="card">
-              <Suspense fallback={<div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading Organizations Table...</div>}>
-                <DataTableWithExportToCSV
-                  rowsData={organizationsListRowsData}
-                  columns={organizationsColumns}
-                  dataForCSV={organisationsForExcel}
-                  title={t("global.list_of_organisations")}
-                  filename="organizations"
-                  onClickRow={onClickOrganisationRow}
-                  emptyRowsDescription={t("dashboard_default.no_organization_in_city")}
-                  columnsDescriptionDataForCSV={organizationsColumnsDescriptionData}
-                  sheet1Title={t("global.list_of_organisations")}
-                  sheet2Title={t("global.description_of_data")}
-                  downloadExcelButtonRef={downloadOrganisationsExcelButtonRef}
-                  onDownloadClick={onClickDownloadExcelOrganisations}
-                  extraButton={<Link style={{ fontSize: '1rem' }} to={routes.city.allOrganisations}>{t("dashboard_default.see_all_orgs")}</Link>}
-                  loading={organisationsLoading}
-                />
-              </Suspense>
-            </Col>
-          </Row>
-        }
+        {(limitSettings?.c8_organization_leaderboard) && (
+          /* Conditional rendering for Organizations Table - lazy loading */
+          shouldRenderOrganizationsTable ? (
+            <Row>
+              <Col className="card">
+                <Suspense fallback={<div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading Organizations Table...</div>}>
+                  <DataTableWithExportToCSV
+                    rowsData={organizationsListRowsData}
+                    columns={organizationsColumns}
+                    dataForCSV={organisationsForExcel}
+                    title={t("global.list_of_organisations")}
+                    filename="organizations"
+                    onClickRow={onClickOrganisationRow}
+                    emptyRowsDescription={t("dashboard_default.no_organization_in_city")}
+                    columnsDescriptionDataForCSV={organizationsColumnsDescriptionData}
+                    sheet1Title={t("global.list_of_organisations")}
+                    sheet2Title={t("global.description_of_data")}
+                    downloadExcelButtonRef={downloadOrganisationsExcelButtonRef}
+                    onDownloadClick={onClickDownloadExcelOrganisations}
+                    extraButton={<Link style={{ fontSize: '1rem' }} to={routes.city.allOrganisations}>{t("dashboard_default.see_all_orgs")}</Link>}
+                    loading={organisationsLoading}
+                    serverSide={true}
+                    totalRecords={organizationsTotalRecords}
+                    currentPage={organizationsCurrentPage}
+                    onPageChange={handleOrganizationsPageChange}
+                    pageSize={10}
+                    useModernPagination={true}
+                  />
+                </Suspense>
+              </Col>
+            </Row>
+          ) : (
+            <Row>
+              <Col className="card">
+                <div
+                  ref={organizationsTablePlaceholderRef}
+                  style={{
+                    height: '400px',
+                    background: '#f8f9fa',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1px solid #dee2e6',
+                    borderRadius: '0.375rem'
+                  }}>
+                  <div style={{ textAlign: 'center', color: '#6c757d' }}>
+                    <div style={{ fontSize: '1.1rem', marginBottom: '8px' }}>🏢 Organizations Table (PLACEHOLDER)</div>
+                    <div style={{ fontSize: '0.9rem' }}>Scroll down to load organizations data</div>
+                    <div style={{ fontSize: '0.8rem', marginTop: '10px', color: '#007bff' }}>
+                      Status: {hasTriggeredOrganizationsTable ? 'TRIGGERED' : 'WAITING FOR SCROLL'}
+                    </div>
+                    <button
+                      onClick={() => {
+                        setHasTriggeredOrganizationsTable(true);
+                        setShouldRenderOrganizationsTable(true);
+                        if (fetchOrganisations) {
+                          fetchOrganisations();
+                        }
+                      }}
+                      style={{ marginTop: '10px', padding: '8px 16px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                    >
+                      Manual Load (Debug)
+                    </button>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+          )
+        )}
 
         {limitSettings?.c19_carpooling_app?.granted && (
           <>

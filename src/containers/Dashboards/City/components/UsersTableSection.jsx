@@ -22,7 +22,9 @@ export default function UsersTableSection({
     filterBy,
     t, onClickUserRow, routes,
     downloadUsersExcelButtonRef,
-    onClickDownloadExcelUsers
+    onClickDownloadExcelUsers,
+    serverSide = true,
+    pageSize = 10
 }) {
     const [data, setData] = useState({
         totalUsers: null,
@@ -30,6 +32,8 @@ export default function UsersTableSection({
         userDataForCsv: null
     });
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalRecords, setTotalRecords] = useState(0);
 
     // Create required column and table configurations
     const dashboardViewModel = useMemo(() => new DashboardViewModel(), []);
@@ -63,41 +67,71 @@ export default function UsersTableSection({
                 startDate: startDateUpdated,
                 endDate: endDateUpdated,
                 challengeId: challengeId || '',
-                branchId: branchId || ''
+                branchId: branchId || '',
+                ...(serverSide && { page: currentPage + 1, limit: pageSize })
             };
 
             const totalUsers = await fetchDashboardTotalUsers(apiParams);
 
-            // Transform users data for table display
-            const usersListRowsData = totalUsers
-                .filter(user => typeof user === 'object')
-                .map((rowData, index) => ({
-                    key: index + 1,
-                    name: rowData?.userFullName || rowData?.fullName || t("global.unknown"),
-                    email: rowData?.user?.email || t("global.unknown"),
-                    ghg: rowData?.totalGreenhouseGazes || 0,
-                    dist: (rowData?.totalDistance / 1000) || 0,
-                    activeDays: rowData?.days || "",
-                    userId: rowData.userId,
-                    lastConnection: rowData?.lastLogin?.value || "",
-                    organisationName: rowData?.organisationName || "",
-                    branchName: rowData?.branchName || "",
-                    packageName: rowData?.packageName || []
-                }));
+            let usersListRowsData, totalUsersCount;
+
+            if (serverSide && totalUsers.data && totalUsers.total !== undefined) {
+                // Server-side pagination response: { data: [], total: number }
+                usersListRowsData = totalUsers.data
+                    .filter(user => typeof user === 'object')
+                    .map((rowData, index) => ({
+                        key: currentPage * pageSize + index + 1,
+                        name: rowData?.userFullName || rowData?.fullName || t("global.unknown"),
+                        email: rowData?.user?.email || t("global.unknown"),
+                        ghg: rowData?.totalGreenhouseGazes || 0,
+                        dist: (rowData?.totalDistance / 1000) || 0,
+                        activeDays: rowData?.days || "",
+                        userId: rowData.userId,
+                        lastConnection: rowData?.lastLogin?.value || "",
+                        organisationName: rowData?.organisationName || "",
+                        branchName: rowData?.branchName || "",
+                        packageName: rowData?.packageName || []
+                    }));
+                totalUsersCount = totalUsers.total;
+            } else {
+                // Legacy response: array of users
+                usersListRowsData = (Array.isArray(totalUsers) ? totalUsers : [])
+                    .filter(user => typeof user === 'object')
+                    .map((rowData, index) => ({
+                        key: index + 1,
+                        name: rowData?.userFullName || rowData?.fullName || t("global.unknown"),
+                        email: rowData?.user?.email || t("global.unknown"),
+                        ghg: rowData?.totalGreenhouseGazes || 0,
+                        dist: (rowData?.totalDistance / 1000) || 0,
+                        activeDays: rowData?.days || "",
+                        userId: rowData.userId,
+                        lastConnection: rowData?.lastLogin?.value || "",
+                        organisationName: rowData?.organisationName || "",
+                        branchName: rowData?.branchName || "",
+                        packageName: rowData?.packageName || []
+                    }));
+                totalUsersCount = usersListRowsData.length;
+            }
 
             setData({ totalUsers, usersListRowsData, userDataForCsv: null });
+            setTotalRecords(totalUsersCount);
         } catch (error) {
             console.error('Error loading users data:', error);
             setData({ totalUsers: [], usersListRowsData: [], userDataForCsv: null });
         } finally {
             setLoading(false);
         }
-    }, [ownerType, ownerId, startDate, endDate, challengeId, branchId, filterBy, t]);
+    }, [ownerType, ownerId, startDate, endDate, challengeId, branchId, filterBy, t, serverSide, currentPage, pageSize]);
 
     // Load data on mount
     useEffect(() => {
         loadData();
     }, [loadData]);
+
+    // Page change handler for server-side pagination
+    const handlePageChange = useCallback((newPageIndex) => {
+        setCurrentPage(newPageIndex);
+    }, []);
 
     const hasData = data.totalUsers !== null;
 
@@ -143,7 +177,13 @@ export default function UsersTableSection({
                             downloadExcelButtonRef={downloadUsersExcelButtonRef}
                             onDownloadClick={onClickDownloadExcelUsers}
                             extraButton={<Link style={{ fontSize: '1rem' }} to={routes.city.allUsers}>{t("dashboard_default.see_all_users")}</Link>}
-                            loading={false}
+                            loading={loading}
+                            serverSide={serverSide}
+                            totalRecords={totalRecords}
+                            currentPage={currentPage}
+                            onPageChange={handlePageChange}
+                            pageSize={pageSize}
+                            useModernPagination={true}
                         />
                     )}
                 </div>
